@@ -1,13 +1,22 @@
-th, td {
-    border-bottom: 0.1em solid #C3C3C3;
+th,
+td {
+  border-bottom: 0.1em solid #c3c3c3;
 }
 
 .hd0 {
-    text-align: start;
+  text-align: start;
 }
 
 .ext-link {
-    cursor: pointer;
-    text-decoration: none;
-    color: black;
+  cursor: pointer;
+  text-decoration: none;
+  color: black;
+}
+
+.zoom-bottom {
+  display: flex;
+  margin-top: 1em;
+  position: absolute;
+  bottom: 1em;
+  zoom: .8;
 }

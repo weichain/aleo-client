@@ -1,20 +1,21 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react'
 // import './Wallet.css';
-import { useWallet } from "@demox-labs/aleo-wallet-adapter-react";
-import { useRequestTransactionHistory } from '../../hooks/useRequestTransactionHistory';
-import "./TransactionHistory.css";
-import TransactionTable from '../TransactionTable/TransactionTable';
+import { useWallet } from '@demox-labs/aleo-wallet-adapter-react'
+import { useRequestTransactionHistory } from '../../hooks/useRequestTransactionHistory'
+import './TransactionHistory.css'
+import TransactionTable from '../TransactionTable/TransactionTable'
 
 const TransactionHistory = () => {
-  const { publicKey, getExecution } = useWallet();
+  const { publicKey, getExecution } = useWallet()
   const [txs, setTxs] = useState([
-    {id:"at1cqgrqjmw3mszgpcmne7ywn274qu4ve8a5du8ds5u93q5taevkq8sgxth8w"},
-    {id:"as1rcdluuas0s5d9awjg965mq670f65tecgl6pu95wj8zxrpalfcgpqw0dhlk"},
-    {id:"as1rcdluuas0s5d9awjg965mq670f65tecgl6pu95wj8zxrpalfcgpqw0dhlk"},
-    {id:"as1rcdluuas0s5d9awjg965mq670f65tecgl6pu95wj8zxrpalfcgpqw0dhlk"},
-    {id:"as1rcdluuas0s5d9awjg965mq670f65tecgl6pu95wj8zxrpalfcgpqw0dhlk"},
-  ]);
-  const { txHistory, loading, error } = useRequestTransactionHistory();
+    { id: 'at1yw56267v4ame6dsdcrj8rnewgen2kdchr8vn5nvxmcq82mzl65rqv5svs2' },
+    { id: 'at123dsq0sfa09n08mfy3234ee5t4mxvxxpen9nxqt0jmfn8jh5ucxs40q4mn' },
+    { id: 'at16zq5hqkekvarfzvmh4phlx0y34wvt6ph6yut6u0l436fr9r7ycxszfeds2' },
+    { id: 'at1npxw8gfsfs3ul8pwupkfr6az7wcuy2sfz0swjkjk6xtx3x6egc8s4shln4' },
+    { id: 'at1fj5m3zfjjaa5vtg0em6ske5u59c43mx0v2jvjledrywk2rny8vzqghvz4d' },
+  ]) //dummy txs until wallet extension is fixed
+
+  const { txHistory, loading, error } = useRequestTransactionHistory()
 
   useEffect(() => {
     if (
@@ -25,28 +26,24 @@ const TransactionHistory = () => {
       txHistory.length === 0 ||
       !getExecution
     )
-      return;
+      return
 
-    console.log("txHistory", txHistory);
-    console.log(JSON.stringify(txHistory.map((t: any) => t)[2]));
-    // Promise.all()
     getExecution(txHistory[0].id)
       .then((data: any) => {
-        console.log("data", data);
+        console.log('data', data)
       })
       .catch((e: any) => {
-        console.log("e", e);
-      });
-  }, [txHistory]);
+        console.log('e', e)
+      })
+  }, [txHistory])
 
   return (
     <div className="tx-history">
       <label>Transaction History</label>
-      {/* Use the new component to render the table with txs as data */}
-      <TransactionTable data={txs} />
+      <TransactionTable data={publicKey ? txs : []} />
+      {!publicKey && <div>Connect wallet to show transactions</div>}
     </div>
-  );
-};
+  )
+}
 
-
-export default TransactionHistory;
+export default TransactionHistory

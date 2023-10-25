@@ -1293,35 +1293,35 @@
   resolved "https://registry.yarnpkg.com/@csstools/selector-specificity/-/selector-specificity-2.2.0.tgz#2cbcf822bf3764c9658c4d2e568bd0c0cb748016"
   integrity sha512-+OJ9konv95ClSTOJCmMZqpd5+YGsB2S+x6w3E1oaM8UuR5j8nTNHYSz8c9BEPGDOCMQYIEEGlVPj/VY64iTbGw==
 
-"@demox-labs/aleo-wallet-adapter-base@^0.0.18":
-  version "0.0.18"
-  resolved "https://registry.yarnpkg.com/@demox-labs/aleo-wallet-adapter-base/-/aleo-wallet-adapter-base-0.0.18.tgz#28c7af854ad34780082aa31bdffffa45c9851478"
-  integrity sha512-uSkSwhzIH9+8sDeiQ56G+q0CeI2AI0NFE166z3NxUzXSnP6CkpomdPRBgKLk9D1UEv8cvNjKjPo2Yb5xA5MFpw==
+"@demox-labs/aleo-wallet-adapter-base@^0.0.19":
+  version "0.0.19"
+  resolved "https://registry.yarnpkg.com/@demox-labs/aleo-wallet-adapter-base/-/aleo-wallet-adapter-base-0.0.19.tgz#d156f195a0caf0c1bd87659e9878ac5747764c19"
+  integrity sha512-D43kBh0WWYC9AfCM23ofMNRA5PBuQJ3D14JvO/GWrZP2HBdfquTJzy7M4cLaUQP92ge1N5cTdKF/DPVnqP5iWA==
   dependencies:
     eventemitter3 "^4.0.7"
 
-"@demox-labs/aleo-wallet-adapter-leo@^0.0.17":
-  version "0.0.17"
-  resolved "https://registry.yarnpkg.com/@demox-labs/aleo-wallet-adapter-leo/-/aleo-wallet-adapter-leo-0.0.17.tgz#2883722c812427fc7c0ec70030c8302ae9a0f737"
-  integrity sha512-8Lw6oQFWzY/zxkqnOmuCXG0KmwcH2H8tv+YLpCy1s+oMBwbAXubQem3vamgC8Gy8GrDicgB85/5iEElJ1NU4Rg==
+"@demox-labs/aleo-wallet-adapter-leo@^0.0.18":
+  version "0.0.18"
+  resolved "https://registry.yarnpkg.com/@demox-labs/aleo-wallet-adapter-leo/-/aleo-wallet-adapter-leo-0.0.18.tgz#0743116be5182b2d6044fe76613d6537799b940a"
+  integrity sha512-+x0oJhS32LOQseDm8+/16H3qnQ8kkQx7xlyCLAh/3TOL5Fo8n0oHf60NgYlQi6jxBIJdIwBWNFJ4T4nBl+oLiA==
   dependencies:
-    "@demox-labs/aleo-wallet-adapter-base" "^0.0.18"
+    "@demox-labs/aleo-wallet-adapter-base" "^0.0.19"
     nanoid "^4.0.0"
 
-"@demox-labs/aleo-wallet-adapter-react@^0.0.17":
-  version "0.0.17"
-  resolved "https://registry.yarnpkg.com/@demox-labs/aleo-wallet-adapter-react/-/aleo-wallet-adapter-react-0.0.17.tgz#f876acb02974a0bca8a399a5327716b17e8e8b59"
-  integrity sha512-SGEAqyumCUey6RrtPDqq6yx8oKN21E9CyR55I7H4qX+fPEmYOabCR5jZw63SnQpvnsY4LJ4hr1yJi4P0pjEPxw==
+"@demox-labs/aleo-wallet-adapter-react@^0.0.18":
+  version "0.0.18"
+  resolved "https://registry.yarnpkg.com/@demox-labs/aleo-wallet-adapter-react/-/aleo-wallet-adapter-react-0.0.18.tgz#dc5fc0a19e0bc350a4feb830758fa1f13cff43e4"
+  integrity sha512-bit3vR+K/jeO4RZebm6TnU4QeihfWZzDVo/vsfMJHUZfSDnzP0ZBVKQZcYBmtPvXWB9hFI9JPpxWPlp0pf0ZKw==
   dependencies:
-    "@demox-labs/aleo-wallet-adapter-base" "^0.0.18"
+    "@demox-labs/aleo-wallet-adapter-base" "^0.0.19"
 
-"@demox-labs/aleo-wallet-adapter-reactui@^0.0.29":
-  version "0.0.29"
-  resolved "https://registry.yarnpkg.com/@demox-labs/aleo-wallet-adapter-reactui/-/aleo-wallet-adapter-reactui-0.0.29.tgz#9c98d13937f86d399850b8c1cc5acd7e23087202"
-  integrity sha512-b3v46zmlpHnyey9ud43gJuBSFjdHOTROnZ0sVS93JRQPJQ8Aq/ybI2zKc9Cr+u0qRrkG5czkqklTsgZ3ROFlLQ==
+"@demox-labs/aleo-wallet-adapter-reactui@^0.0.30":
+  version "0.0.30"
+  resolved "https://registry.yarnpkg.com/@demox-labs/aleo-wallet-adapter-reactui/-/aleo-wallet-adapter-reactui-0.0.30.tgz#e0dce30c248b84d18462274cb234b5c7e9cab4bf"
+  integrity sha512-2hR0pKopzd7A1cbFarKs1r9SUmc/vrc5vEzPxzV3E45Xa4/be/3A8HjL19rZslkq4QV2S2TEbpI+noXMgFmOZw==
   dependencies:
-    "@demox-labs/aleo-wallet-adapter-base" "^0.0.18"
-    "@demox-labs/aleo-wallet-adapter-react" "^0.0.17"
+    "@demox-labs/aleo-wallet-adapter-base" "^0.0.19"
+    "@demox-labs/aleo-wallet-adapter-react" "^0.0.18"
 
 "@eslint-community/eslint-utils@^4.2.0":
   version "4.4.0"
@@ -8964,6 +8964,11 @@ prelude-ls@~1.1.2:
   resolved "https://registry.yarnpkg.com/prelude-ls/-/prelude-ls-1.1.2.tgz#21932a549f5e52ffd9a827f570e04be62a97da54"
   integrity sha512-ESF23V4SKG6lVSGZgYNpbsiaAkdab6ZgOxe52p7+Kid3W3u3bxR4Vfd/o21dmN7jSt0IwgZ4v5MUd26FEtXE9w==
 
+prettier@3.0.3:
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-3.0.3.tgz#432a51f7ba422d1469096c0fdc28e235db8f9643"
+  integrity sha512-L/4pUDMxcNa8R/EthV08Zt42WBO4h1rarVtK0K+QJG0X187OLo7l699jWw0GKuwzkPQ//jMFA/8Xm6Fh3J/DAg==
+
 pretty-bytes@^5.3.0, pretty-bytes@^5.4.1:
   version "5.6.0"
   resolved "https://registry.yarnpkg.com/pretty-bytes/-/pretty-bytes-5.6.0.tgz#356256f643804773c82f64723fe78c92c62beaeb"
@@ -9316,6 +9321,11 @@ react@^18.2.0:
   integrity sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==
   dependencies:
     loose-envify "^1.1.0"
+
+reactjs-popup@^2.0.6:
+  version "2.0.6"
+  resolved "https://registry.yarnpkg.com/reactjs-popup/-/reactjs-popup-2.0.6.tgz#ff0e340e31d03785ae62f6b6cf62de1ef48c9605"
+  integrity sha512-A+tt+x9wdgZiZjv0e2WzYLD3IfFwJALaRaqwrCSXGjo0iQdsry/EtBEbQXRSmQs7cHmOi5eytCiSlOm8k4C+dg==
 
 read-cache@^1.0.0:
   version "1.0.0"

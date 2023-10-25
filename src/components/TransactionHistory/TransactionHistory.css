@@ -1,13 +1,14 @@
 .tx-history {
-    display: flex;
-    flex-direction: column;
-    border: .1em solid black;
-    padding: 1em;
-    width: 55%;
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  border: 0.1em solid black;
+  padding: 1em;
+  width: 55%;
 
-    > label {
-        font-weight: bold;
-        margin-bottom: 1em;
-        font-size: 1.2em;
-    }
+  > label {
+    font-weight: bold;
+    margin-bottom: 1em;
+    font-size: 1.2em;
+  }
 }
