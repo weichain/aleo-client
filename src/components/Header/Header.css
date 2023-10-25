@@ -1,0 +1,43 @@
+.header {
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 100%;
+    /* height: 5em; */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: .1em solid black;
+  }
+  
+  .logo {
+    margin-left: 1em;
+    height: 2.2em;
+  }
+
+  .img-logo {
+    height: 100%;
+    width: 100%;
+    background: black;
+    border-radius: 0.3em;
+  }
+  
+  .nav-link {
+    text-decoration: none;
+    color: black;
+    cursor: pointer;
+  }
+
+  ul {
+    padding-inline-start: 0 !important;
+  }
+
+  .wallet-adapter-button {
+    color:black !important;
+  }
+
+  .start {
+    display: flex;
+    gap: 2em;
+  }
+  

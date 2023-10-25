@@ -1,0 +1,9 @@
+.wallet {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    border: .1em solid black;
+    padding: 1em;
+    gap: 0.7em;
+    width: 40%;
+}
