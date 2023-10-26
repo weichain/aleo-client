@@ -8,7 +8,7 @@ import {
   WalletAdapterNetwork,
 } from '@demox-labs/aleo-wallet-adapter-base'
 import { WalletModalProvider } from '@demox-labs/aleo-wallet-adapter-reactui'
-import { RecordsContextProvider } from './state/context'
+import { AppContextProvider } from './state/context'
 
 function App() {
   const wallets = useMemo(
@@ -28,9 +28,9 @@ function App() {
       autoConnect
     >
       <WalletModalProvider>
-        <RecordsContextProvider>
+        <AppContextProvider>
           <Home />
-        </RecordsContextProvider>
+        </AppContextProvider>
       </WalletModalProvider>
     </WalletProvider>
   )

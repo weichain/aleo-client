@@ -25,7 +25,7 @@ const Home = () => {
     <div className="home">
       <Header />
       <div className="inner-home">
-        <h1 className="title">Aleo Transfers</h1>
+        <h1 className="title">DistroFund Aleo</h1>
         <p className="subtitle">
           A blockchain-based asset transfer app with user-friendly interface.
         </p>

@@ -1,14 +1,14 @@
 import { WalletNotConnectedError } from '@demox-labs/aleo-wallet-adapter-base'
 import { useWallet } from '@demox-labs/aleo-wallet-adapter-react'
 import { useEffect, useState } from 'react'
-import { useRecordsContext } from '../state/context'
+import { useAppContext } from '../state/context'
 
 export const useRequestRecords = () => {
   const { publicKey, requestRecords } = useWallet()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
-  const { records, setRecords } = useRecordsContext()!
+  const { records, setRecords } = useAppContext()!
 
   // if (!publicKey) throw new WalletNotConnectedError();
 

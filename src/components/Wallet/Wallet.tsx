@@ -4,19 +4,24 @@ import './Wallet.css'
 import { useRequestMapping } from '../../hooks/useRequestMapping'
 import { useRequestTransactionHistory } from '../../hooks/useRequestTransactionHistory'
 import { useWallet } from '@demox-labs/aleo-wallet-adapter-react'
+import { useAppContext } from '../../state/context'
 
 const Wallet = () => {
   const { publicKey } = useWallet()
-  const [balanceRecords, setBalanceRecords] = useState('0')
-  const [balanceMapping, setBalanceMapping] = useState('0')
   const { records } = useRequestRecords()
   const { mapping } = useRequestMapping()
+  const {
+    balanceAllRecords,
+    mapping: mappingBalance,
+    setBalanceAllRecords,
+    setMapping,
+  } = useAppContext()!
 
   useEffect(() => {
+    let temp
     if (mapping) {
-      setBalanceMapping(
-        (Number(mapping.replace('u64', '')) / 10 ** 6).toString()
-      )
+      temp = (Number(mapping.replace('u64', '')) / 10 ** 6).toString()
+      setMapping(temp)
     }
     if (records?.length > 0) {
       let balance0 = 0
@@ -24,23 +29,24 @@ const Wallet = () => {
         if (r.spent) return
         balance0 += Number(r.data.microcredits.replace('u64.private', ''))
       })
-      setBalanceRecords(String(balance0 / 10 ** 6))
+      temp = String(balance0 / 10 ** 6)
+      setBalanceAllRecords(temp)
     }
   }, [mapping, records])
 
   useEffect(() => {
     if (publicKey) return
-    setBalanceMapping('0')
-    setBalanceRecords('0')
+    setMapping('0')
+    setBalanceAllRecords('0')
   }, [publicKey])
 
   return (
     <div className="wallet">
       <div className={`balances ${!publicKey && 'disable'}`}>
         <label>Balance</label>
-        <span>Private: {balanceRecords} ALEO</span>
-        <span>Public: {balanceMapping} ALEO</span>
-        <span>Total: {Number(balanceRecords + balanceMapping)} ALEO</span>
+        <span>Private: {balanceAllRecords} ALEO</span>
+        <span>Public: {mappingBalance} ALEO</span>
+        <span>Total: {Number(balanceAllRecords + mappingBalance)} ALEO</span>
       </div>
       {!publicKey && <div>Connect wallet to show balance</div>}
     </div>

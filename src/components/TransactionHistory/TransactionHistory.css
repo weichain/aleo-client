@@ -12,3 +12,8 @@
     font-size: 1.2em;
   }
 }
+
+.disable {
+  color: gray;
+  opacity: 0.8;
+}

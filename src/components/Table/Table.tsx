@@ -1,22 +1,26 @@
-import { useMemo } from 'react'
 import { useTable, usePagination } from 'react-table'
-import './TransactionTable.css'
-import { ExternalLink } from 'react-external-link'
-import TruncateText from '../TruncateText/TruncateText'
+import './Table.css'
 
-const TransactionTable = ({ data }: { data: any[] }) => {
-  const columns = useMemo(
-    () => [
-      {
-        Header: 'Transaction ID',
-        accessor: 'id',
-      },
-    ],
-    []
-  )
+interface InputParamsInterface {
+  data: any[]
+  createRow: (row: any) => JSX.Element
+  createdColumns: {
+    Header: string
+    accessor: string
+  }[]
+  pageSize: number
+}
+
+const Table = ({
+  data,
+  createRow,
+  createdColumns,
+  pageSize,
+}: InputParamsInterface) => {
+  const columns = createdColumns
 
   const tableInstance = useTable(
-    { columns, data, initialState: { pageIndex: 0, pageSize: 4 } },
+    { columns, data, initialState: { pageIndex: 0, pageSize } },
     usePagination
   )
 
@@ -53,23 +57,7 @@ const TransactionTable = ({ data }: { data: any[] }) => {
         <tbody {...getTableBodyProps()}>
           {page.map((row) => {
             prepareRow(row)
-            return (
-              <tr {...row.getRowProps()}>
-                {row.cells.map((cell) => {
-                  return (
-                    <td {...cell.getCellProps()}>
-                      <ExternalLink
-                        href={`https://explorer.aleo.org/transaction/${cell.value}`}
-                        className="ext-link"
-                      >
-                        {/* {cell.render("Cell")} */}
-                        <TruncateText text={cell.value} limit={30} />
-                      </ExternalLink>
-                    </td>
-                  )
-                })}
-              </tr>
-            )
+            return createRow(row)
           })}
         </tbody>
       </table>
@@ -90,7 +78,7 @@ const TransactionTable = ({ data }: { data: any[] }) => {
           >
             {'>>'}
           </button>{' '}
-          <span>
+          <span style={{ marginLeft: '1em' }}>
             Page{' '}
             <strong>
               {tableInstance.state.pageIndex + 1} of {pageOptions.length}
@@ -102,4 +90,4 @@ const TransactionTable = ({ data }: { data: any[] }) => {
   )
 }
 
-export default TransactionTable
+export default Table

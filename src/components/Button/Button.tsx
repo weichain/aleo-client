@@ -4,11 +4,12 @@ import './Button.css'
 interface ButtonProps {
   text: string
   onClick: (event: React.MouseEvent<HTMLButtonElement>) => void
+  className?: string
 }
 
-export const Button = ({ text, onClick }: ButtonProps) => {
+export const Button = ({ text, onClick, className = 'btn' }: ButtonProps) => {
   return (
-    <button className="btn" onClick={onClick}>
+    <button className={className} onClick={onClick}>
       {text}
     </button>
   )

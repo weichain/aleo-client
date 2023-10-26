@@ -15,6 +15,8 @@ td {
 
 .zoom-bottom {
   display: flex;
+  flex-direction: row;
+  gap: .5em;
   margin-top: 1em;
   position: absolute;
   bottom: 1em;

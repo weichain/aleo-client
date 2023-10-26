@@ -2,11 +2,11 @@ import { useState, useEffect } from 'react'
 import Popup from 'reactjs-popup'
 import 'reactjs-popup/dist/index.css'
 
-interface PopupProps {
+interface PopupErrorProps {
   message: Error | undefined
 }
 
-const ControlledPopup = ({ message }: PopupProps) => {
+const PopupError = ({ message }: PopupErrorProps) => {
   const [open, setOpen] = useState<boolean>()
   const closeModal = () => setOpen(false)
 
@@ -26,4 +26,4 @@ const ControlledPopup = ({ message }: PopupProps) => {
   )
 }
 
-export default ControlledPopup
+export default PopupError
