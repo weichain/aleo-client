@@ -2,6 +2,10 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+You can find extra information about distro fund here: https://teoorg.gitbook.io/distrofund/
+
+This repository is the frontend side connected to the aleo smart contracts situated in this repository: https://github.com/weichain/DistroFund
+
 ## Available Scripts
 
 In the project directory, you can run:
