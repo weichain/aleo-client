@@ -37,7 +37,7 @@ const PopupReview = ({
   const { mapping, balanceAllRecords, records } = useAppContext()!
 
   const calcBalance = () => {
-    return Number(mapping) + Number(balanceAllRecords)
+    return (Number(mapping) + Number(balanceAllRecords)).toFixed(6)
   }
 
   useEffect(() => {
@@ -51,7 +51,7 @@ const PopupReview = ({
       data.push({ account, amount })
     }
     setData(data)
-    setTotalAmount(total.toString())
+    setTotalAmount(total.toFixed(6))
   }, [accounts, amounts])
 
   const columns = useMemo(
@@ -120,17 +120,20 @@ const PopupReview = ({
       <div className="nfo">
         <div>
           <span>Total:</span>
-          <span>{totalAmount} Aleo</span>
+          <span>{parseFloat(totalAmount ?? '0')} Aleo</span>
         </div>
         {publicKey && (
           <>
             <div>
               <span>Your Balance:</span>
-              <span>{calcBalance()} Aleo</span>
+              <span>{parseFloat(calcBalance())} Aleo</span>
             </div>
             <div>
               <span>Remaining:</span>
-              <span>{calcBalance() - Number(totalAmount)} Aleo</span>
+              <span>
+                {parseFloat(calcBalance()) - parseFloat(totalAmount ?? '0')}{' '}
+                Aleo
+              </span>
             </div>
           </>
         )}
