@@ -1,9 +1,21 @@
 .wallet {
-    display: flex;
-    flex-direction: column;
-    align-items: start;
-    border: .1em solid black;
-    padding: 1em;
-    gap: 0.7em;
-    width: 40%;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  border: 0.1em solid black;
+  padding: 1em;
+  gap: 0.7em;
+  width: 40%;
+}
+
+.balances {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 0.7em;
+}
+
+.disable {
+  color: gray;
+  opacity: 0.8;
 }

@@ -1,52 +1,66 @@
-import { useEffect, useState } from 'react';
-// import './Wallet.css';
-import { useWallet } from "@demox-labs/aleo-wallet-adapter-react";
-import { useRequestTransactionHistory } from '../../hooks/useRequestTransactionHistory';
-import "./TransactionHistory.css";
-import TransactionTable from '../TransactionTable/TransactionTable';
+import { useEffect, useMemo, useState } from 'react'
+import { useWallet } from '@demox-labs/aleo-wallet-adapter-react'
+import { useRequestTransactionHistory } from '../../hooks/useRequestTransactionHistory'
+import './TransactionHistory.css'
+import Table from '../Table/Table'
+import { Row } from 'react-table'
+import { ExternalLink } from 'react-external-link'
+import TruncateText from '../TruncateText/TruncateText'
 
 const TransactionHistory = () => {
-  const { publicKey, getExecution } = useWallet();
-  const [txs, setTxs] = useState([
-    {id:"at1cqgrqjmw3mszgpcmne7ywn274qu4ve8a5du8ds5u93q5taevkq8sgxth8w"},
-    {id:"as1rcdluuas0s5d9awjg965mq670f65tecgl6pu95wj8zxrpalfcgpqw0dhlk"},
-    {id:"as1rcdluuas0s5d9awjg965mq670f65tecgl6pu95wj8zxrpalfcgpqw0dhlk"},
-    {id:"as1rcdluuas0s5d9awjg965mq670f65tecgl6pu95wj8zxrpalfcgpqw0dhlk"},
-    {id:"as1rcdluuas0s5d9awjg965mq670f65tecgl6pu95wj8zxrpalfcgpqw0dhlk"},
-  ]);
-  const { txHistory, loading, error } = useRequestTransactionHistory();
+  const { publicKey } = useWallet()
+  const [txs, setTxs] = useState([])
+  const { txHistory, loading, error } = useRequestTransactionHistory()
 
   useEffect(() => {
-    if (
-      !publicKey ||
-      loading ||
-      error ||
-      !txHistory ||
-      txHistory.length === 0 ||
-      !getExecution
-    )
-      return;
+    if (txHistory?.length > 0) {
+      setTxs(txHistory)
+    }
+  }, [txHistory])
 
-    console.log("txHistory", txHistory);
-    console.log(JSON.stringify(txHistory.map((t: any) => t)[2]));
-    // Promise.all()
-    getExecution(txHistory[0].id)
-      .then((data: any) => {
-        console.log("data", data);
-      })
-      .catch((e: any) => {
-        console.log("e", e);
-      });
-  }, [txHistory]);
+  const columns = useMemo(
+    () => [
+      {
+        Header: 'Transaction ID',
+        accessor: 'transactionId',
+      },
+    ],
+    []
+  )
+
+  const createRow = (row: Row) => {
+    return (
+      <tr {...row.getRowProps()}>
+        {row.cells.map((cell) => {
+          return (
+            <td {...cell.getCellProps()}>
+              <ExternalLink
+                href={`https://explorer.aleo.org/transaction/${cell.value}`}
+                className="ext-link"
+              >
+                <TruncateText text={cell.value} limit={36} />
+              </ExternalLink>
+            </td>
+          )
+        })}
+      </tr>
+    )
+  }
 
   return (
     <div className="tx-history">
-      <label>Transaction History</label>
-      {/* Use the new component to render the table with txs as data */}
-      <TransactionTable data={txs} />
+      <label className={`${!publicKey && 'disable'}`}>
+        Transaction History
+      </label>
+      <Table
+        data={publicKey ? txs : []}
+        createRow={createRow}
+        createdColumns={columns}
+        pageSize={4}
+      />
+      {!publicKey && <div>Connect wallet to show transactions</div>}
     </div>
-  );
-};
+  )
+}
 
-
-export default TransactionHistory;
+export default TransactionHistory

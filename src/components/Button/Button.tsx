@@ -1,14 +1,18 @@
-import React from 'react';
+import React from 'react'
 import './Button.css'
 
 interface ButtonProps {
-    text: string
-    onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  }
-  
-
-export const Button = ({ text, onClick }: ButtonProps) => {
-    return <button className="btn" onClick={onClick}>{text}</button>
+  text: string
+  onClick: (event: React.MouseEvent<HTMLButtonElement>) => void
+  className?: string
 }
 
-export default Button;
+export const Button = ({ text, onClick, className = 'btn' }: ButtonProps) => {
+  return (
+    <button className={className} onClick={onClick}>
+      {text}
+    </button>
+  )
+}
+
+export default Button

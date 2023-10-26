@@ -1,21 +1,24 @@
-import React, { useMemo } from 'react';
+import React, { useMemo } from 'react'
 import './App.css'
 import Home from './pages/Home/Home'
-import { LeoWalletAdapter } from '@demox-labs/aleo-wallet-adapter-leo';
-import { WalletProvider } from '@demox-labs/aleo-wallet-adapter-react';
-import { DecryptPermission, WalletAdapterNetwork } from '@demox-labs/aleo-wallet-adapter-base';
-import { WalletModalProvider } from '@demox-labs/aleo-wallet-adapter-reactui';
-import { RecordsContextProvider } from './state/context';
+import { LeoWalletAdapter } from '@demox-labs/aleo-wallet-adapter-leo'
+import { WalletProvider } from '@demox-labs/aleo-wallet-adapter-react'
+import {
+  DecryptPermission,
+  WalletAdapterNetwork,
+} from '@demox-labs/aleo-wallet-adapter-base'
+import { WalletModalProvider } from '@demox-labs/aleo-wallet-adapter-reactui'
+import { AppContextProvider } from './state/context'
 
 function App() {
   const wallets = useMemo(
     () => [
       new LeoWalletAdapter({
-        appName: "Leo Transfer App",
+        appName: 'Leo Transfer App',
       }),
     ],
     []
-  );
+  )
   return (
     <WalletProvider
       wallets={wallets}
@@ -25,12 +28,12 @@ function App() {
       autoConnect
     >
       <WalletModalProvider>
-       <RecordsContextProvider>
-        <Home />
-       </RecordsContextProvider>
+        <AppContextProvider>
+          <Home />
+        </AppContextProvider>
       </WalletModalProvider>
     </WalletProvider>
-  );
+  )
 }
 
-export default App;
+export default App
