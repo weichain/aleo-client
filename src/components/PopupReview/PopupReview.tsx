@@ -18,6 +18,7 @@ interface PopupReviewProps {
   checkValidInputs: () => [string[], string[], Error | undefined]
   setSubmitError: (error: any) => void
   record: any
+  privateKey: string | undefined
 }
 
 const PopupReview = ({
@@ -28,6 +29,7 @@ const PopupReview = ({
   checkValidInputs,
   setSubmitError,
   record,
+  privateKey,
 }: PopupReviewProps) => {
   const { publicKey, wallet } = useWallet()
   const [open, setOpen] = useState<boolean>()
@@ -97,7 +99,12 @@ const PopupReview = ({
             recipients: accounts,
             setSubmitError,
           })
-        : handleMultiMethodSubmit({ checkValidInputs, record, setSubmitError })
+        : handleMultiMethodSubmit({
+            checkValidInputs,
+            record,
+            setSubmitError,
+            privateKey,
+          })
     } catch (e) {
       console.log('e', e)
     }
