@@ -35,7 +35,7 @@ const Home = () => {
             onClick={handleCreateNewTransaction}
           />
         </div>
-        {showCreateTx && <CreateTransaction />}
+        {showCreateTx && <CreateTransaction/>}
         <div>
           <p className="wallet-label">Wallet</p>
           <div className="info-wrapper">

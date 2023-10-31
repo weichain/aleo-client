@@ -19,6 +19,7 @@ interface PopupReviewProps {
   setSubmitError: (error: any) => void
   record: any
   privateKey: string | undefined
+  aleoWorker: Worker
 }
 
 const PopupReview = ({
@@ -30,6 +31,7 @@ const PopupReview = ({
   setSubmitError,
   record,
   privateKey,
+  aleoWorker
 }: PopupReviewProps) => {
   const { publicKey, wallet } = useWallet()
   const [open, setOpen] = useState<boolean>()
@@ -104,6 +106,8 @@ const PopupReview = ({
             record,
             setSubmitError,
             privateKey,
+            setTransactionId,
+            // aleoWorker
           })
     } catch (e) {
       console.log('e', e)

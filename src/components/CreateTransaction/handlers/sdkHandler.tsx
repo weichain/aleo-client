@@ -1,30 +1,34 @@
 import { AddressesInput } from '../../../types/program'
 import * as aleo from '@aleohq/sdk'
 import {
-  getNumberPerTransition,
   getTransitionsNames,
 } from '../../../utils/transitionNames'
 import {
   createAddressesInput,
   createAmountsInput,
 } from '../../../utils/programInput'
-import { retry } from '../../../utils/retry'
+import { AleoWorker } from '../../../workers/AleoWorker.js'
+
+const aleoWorker = AleoWorker();
 
 interface handleMultiMethodSubmitParams {
   checkValidInputs: () => [any, any, any]
   setSubmitError: (error: any) => void
   record: string | undefined
   privateKey: string | undefined
+  setTransactionId: (txId: string) => void
+  // aleoWorker: Worker
 }
 
 const checkValidPrivKey = (key: string) => {}
 
-// untested
 export const handleMultiMethodSubmit = async ({
   checkValidInputs,
   setSubmitError,
   record,
   privateKey,
+  setTransactionId,
+  // aleoWorker
 }: handleMultiMethodSubmitParams) => {
   if (!record) return setSubmitError(new Error('Selected is empty record'))
   let privateKeyObject
@@ -35,21 +39,10 @@ export const handleMultiMethodSubmit = async ({
   }
 
   const [_recipients, _amounts, error] = checkValidInputs()
+  const transition = getTransitionsNames(_recipients.length)
+
   if (error) return setSubmitError(error)
 
-  const programName = 'multi_transfer_aleo.aleo'
-  const transitions = getTransitionsNames(_recipients.length)
-
-  const defaultHost = 'https://api.explorer.aleo.org/v1'
-  const keyProvider = new aleo.AleoKeyProvider()
-  const programManager = new aleo.ProgramManager(
-    defaultHost,
-    keyProvider,
-    undefined
-  )
-
-  keyProvider.useCache(true)
-  programManager.setHost(defaultHost)
 
   // automatic calc of fee left as comment since execution speeds are very slow; waiting for improvements
   // const executeFee = await programManager.executionEngine.estimateExecutionFee(
@@ -64,117 +57,16 @@ export const handleMultiMethodSubmit = async ({
   //   undefined
   // )
   // console.log('fee: ', Number(executeFee))
-  const cacheKey = `${programName}:${transitions[0]}`
-  const keyParams = new aleo.AleoKeyProviderParams({ cacheKey: cacheKey })
 
-  const numberPerTransition = getNumberPerTransition(_recipients.length)
   const inputAddresses = JSON.stringify(
-    createAddressesInput(_recipients.slice(0, numberPerTransition[0]))
+    createAddressesInput(_recipients)
   ).replaceAll('"', '')
   const inputAmounts = JSON.stringify(
-    createAmountsInput(_amounts.slice(0, numberPerTransition[0]))
+    createAmountsInput(_amounts)
   ).replaceAll('"', '')
-
-  const transaction_id = await programManager.execute(
-    programName,
-    transitions[0],
-    0.5,
-    false,
-    [record as string, inputAddresses, inputAmounts],
-    undefined,
-    keyParams,
-    undefined,
-    undefined,
-    undefined,
-    privateKeyObject
-  )
-  const transaction = await retry(() =>
-    programManager.networkClient.getTransaction(transaction_id.toString())
-  )
-  let recordFromFirstTransaction
-  if (
-    transaction &&
-    'execution' in transaction &&
-    transaction.execution &&
-    transaction.execution.transitions &&
-    transaction.execution.transitions[0] &&
-    transaction.execution.transitions[0].outputs
-  ) {
-    recordFromFirstTransaction = transaction.execution.transitions[0].outputs[1]
-  }
-  if (transitions[1]) {
-    const recordCiphertext = aleo.RecordCiphertext.fromString(
-      recordFromFirstTransaction?.value as string
-    )
-    const recordPlaintext = recordCiphertext.decrypt(
-      privateKeyObject.to_view_key()
-    )
-
-    const secondInputAddresses = JSON.stringify(
-      createAddressesInput(_recipients.slice(numberPerTransition[0]))
-    ).replaceAll('"', '')
-    const secondInputAmounts = JSON.stringify(
-      createAmountsInput(_amounts.slice(numberPerTransition[0]))
-    ).replaceAll('"', '')
-
-    const secondTransactionId = await programManager.execute(
-      programName,
-      transitions[1],
-      0.5,
-      false,
-      [recordPlaintext.toString(), secondInputAddresses, secondInputAmounts],
-      undefined,
-      keyParams,
-      undefined,
-      undefined,
-      undefined,
-      privateKeyObject
-    )
-    console.log(secondTransactionId)
+  const transaction_id = await aleoWorker.executeProgram(privateKey, transition, record, inputAddresses, inputAmounts)
+  
+  if (transaction_id){
+    setTransactionId(transaction_id as string)
   }
 }
-
-// const handleSingleMethodSubmit = async () => {
-//   const [_recipients, _amounts, error] = checkValidInputs()
-
-//   const programName = 'single_transfer_aleo.aleo'
-//   const functionName = 'main'
-
-//   const defaultHost = 'https://api.explorer.aleo.org/v1'
-//   const keyProvider = new aleo.AleoKeyProvider()
-//   const programManager = new aleo.ProgramManager(
-//     defaultHost,
-//     keyProvider,
-//     undefined
-//   )
-
-//   keyProvider.useCache(true)
-//   const privateKeyObject = aleo.PrivateKey.from_string(privateKey as string)
-
-//   const cacheKey = `${programName}:${functionName}`
-
-//   const keyParams = new aleo.AleoKeyProviderParams({ cacheKey: cacheKey })
-//   programManager.setHost(defaultHost)
-//   const inputs = [
-//     record,
-//     JSON.stringify(createAddressesInput(_recipients)).replaceAll('"', ''),
-//     JSON.stringify(createAmountsInput(_amounts)).replaceAll('"', ''),
-//   ] as string[]
-
-//   const transaction_id = await programManager.execute(
-//     programName,
-//     functionName,
-//     0.5,
-//     false,
-//     inputs,
-//     undefined,
-//     keyParams,
-//     undefined,
-//     undefined,
-//     undefined,
-//     privateKeyObject
-//   )
-//   const transaction = await programManager.networkClient.getTransaction(
-//     transaction_id as string
-//   )
-// }

@@ -1,5 +1,3 @@
-import * as aleo from '@aleohq/sdk'
-
 import { ChangeEvent, MouseEvent, useState } from 'react'
 import './CreateTransaction.css'
 import Button from '../Button/Button'
@@ -8,21 +6,10 @@ import { useAppContext } from '../../state/context'
 
 import PopupError from '../PopupError/PopupError'
 import {
-  createAddressesInput,
-  createAmountsInput,
-} from '../../utils/programInput'
-import { handleMultiMethodSubmit } from './handlers/sdkHandler'
-import {
   handleSubmitWalletExtension,
   transformInputs,
 } from './handlers/extensionHandler'
 import PopupReview from '../PopupReview/PopupReview'
-
-import { retry } from '../../utils/retry'
-import {
-  getNumberPerTransition,
-  getTransitionsNames,
-} from '../../utils/transitionNames'
 
 interface WalletSendInputs {
   recordToSend: any
@@ -108,10 +95,6 @@ const CreateTransaction = () => {
     setShowPopupReview(recipients.length > 0)
   }
 
-  const handleMultiMethodSubmit = async (
-    event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
-  ) => {}
-
   return (
     <div className="component">
       {!publicKey && (
@@ -166,8 +149,11 @@ const CreateTransaction = () => {
           setSubmitError={setSubmitError}
           setTransactionId={setTransactionId}
           privateKey={privateKey}
+          // aleoWorker={aleoWorker}
         />
       )}
+
+      {transactionId && (<span>{transactionId}</span>)}
     </div>
   )
 }
