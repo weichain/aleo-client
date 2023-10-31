@@ -1,25 +1,24 @@
-import { useEffect, useState } from 'react'
-import Header from '../../components/Header/Header' // change this to your header component path
-import './Home.css' // import the CSS file
-import CreateTransaction from '../../components/CreateTransaction/CreateTransaction'
-import { useWallet } from '@demox-labs/aleo-wallet-adapter-react'
-import Wallet from '../../components/Wallet/Wallet'
-import { Button } from '../../components/Button/Button'
-import TransactionHistory from '../../components/TransactionHistory/TransactionHistory'
+import { useEffect, useState } from "react";
+import Header from "../../components/Header/Header"; // change this to your header component path
+import "./Home.css"; // import the CSS file
+import CreateTransaction from "../../components/CreateTransaction/CreateTransaction";
+import { useWallet } from "@demox-labs/aleo-wallet-adapter-react";
+import Wallet from "../../components/Wallet/Wallet";
+import { Button } from "../../components/Button/Button";
+import TransactionHistory from "../../components/TransactionHistory/TransactionHistory";
 
 const Home = () => {
-  const { publicKey } = useWallet()
-  const [showCreateTx, setCreateTx] = useState(false)
-  const [showWalletInfo, setShowWalletInfo] = useState(false)
-  console.log('publicKey', publicKey)
+  const { publicKey } = useWallet();
+  const [showCreateTx, setCreateTx] = useState(false);
+  const [showWalletInfo, setShowWalletInfo] = useState(false);
 
   const handleCreateNewTransaction = () => {
-    setCreateTx(!showCreateTx)
-  }
+    setCreateTx(!showCreateTx);
+  };
 
   useEffect(() => {
-    setShowWalletInfo(publicKey ? true : false)
-  }, [publicKey])
+    setShowWalletInfo(publicKey ? true : false);
+  }, [publicKey]);
 
   return (
     <div className="home">
@@ -47,7 +46,7 @@ const Home = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

@@ -1,50 +1,90 @@
-# Getting Started with Create React App
+# React + Aleo + Leo
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/fork/github/AleoHQ/sdk/tree/testnet3/create-aleo-app/template-react)
 
-You can find extra information about distro fund here: https://teoorg.gitbook.io/distrofund/
+This template provides a minimal setup to get React and Aleo working in Vite
+with HMR and some ESLint rules.
 
-This repository is the frontend side connected to the aleo smart contracts situated in this repository: https://github.com/weichain/DistroFund
+This template includes a Leo program that is loaded by the web app located in
+the `helloworld` directory.
 
-## Available Scripts
+Note: Webpack is currently used for production builds due to a
+[bug](https://github.com/vitejs/vite/issues/13367) with Vite related to nested
+workers.
 
-In the project directory, you can run:
+### Start in development mode
 
-### `yarn start`
+```bash
+npm run dev
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Your app should be running on http://localhost:5173/
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+### Build Leo program
 
-### `yarn test`
+1. Copy the `helloworld/.env.example` to `helloworld/.env` (this will be ignored
+   by Git):
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+   ```bash
+   cd helloworld
+   cp .env.example .env
+   ```
 
-### `yarn build`
+2. Replace `PRIVATE_KEY=user1PrivateKey` in the `.env` with your own key (you
+   can use an existing one or generate your own at https://aleo.tools/account)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+3. Follow instructions to install Leo here: https://github.com/AleoHQ/leo
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+4. You can edit `helloworld/src/main.leo` and run `leo run` to compile and update the
+   Aleo instructions under `build` which are loaded by the web app.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Deploy program from web app
 
-### `yarn eject`
+> [!WARNING]  
+> This is for demonstration purposes or local testing only, in production applications you
+> should avoid building a public facing web app with private key information
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+Information on generating a private key, seeding a wallet with funds, and finding a spendable record can be found here
+if you are unfamiliar: https://developer.aleo.org/testnet/getting_started/deploy_execute_demo
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Aleo programs deployed require unique names, make sure to edit the program's name to something unique in `helloworld/src/main.leo`, `helloworld/program.json`, rename `helloworld/inputs/helloworld.in` and rebuild.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+1. In the `worker.js` file modify the privateKey to be an account with available
+   funds
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+   ```js
+   // Use existing account with funds
+   const account = new Account({
+     privateKey: "user1PrivateKey",
+   });
+   ```
 
-## Learn More
+2. (Optional) Provide a fee record manually (located in commented code within `worker.js`)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+   If you do not provide a manual fee record, the SDK will attempt to scan for a record starting at the latest block. A simple way to speed this up would be to make a public transaction to this account right before deploying.
+   
+3. Run the web app and hit the deploy button
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Production deployment
+
+### Build
+
+`npm run build`
+
+Upload `dist` folder to your host of choice.
+
+### ⚠️ Header warnings
+
+`DOMException: Failed to execute 'postMessage' on 'Worker': SharedArrayBuffer transfer requires self.crossOriginIsolated`
+
+If you get a warning similar to this when deploying your application, you need
+to make sure your web server is configured with the following headers:
+
+```
+Cross-Origin-Opener-Policy: same-origin
+Cross-Origin-Embedder-Policy: require-corp
+```
+
+We've included a `_headers` file that works with some web hosts (e.g. Netlify)
+but depending on your host / server setup you may need to configure the headers
+manually.

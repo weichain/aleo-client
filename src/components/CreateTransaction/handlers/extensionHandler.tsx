@@ -2,18 +2,18 @@ import {
   Transaction,
   WalletAdapterNetwork,
   WalletNotConnectedError,
-} from '@demox-labs/aleo-wallet-adapter-base'
+} from "@demox-labs/aleo-wallet-adapter-base";
 import {
   createAddressesInput,
   createAmountsInput,
-} from '../../../utils/programInput'
-import { LeoWalletAdapter } from '@demox-labs/aleo-wallet-adapter-leo'
-import { Wallet } from '@demox-labs/aleo-wallet-adapter-react'
+} from "../../../utils/programInput";
+import { LeoWalletAdapter } from "@demox-labs/aleo-wallet-adapter-leo";
+import { Wallet } from "@demox-labs/aleo-wallet-adapter-react";
 
 interface ValidateInputsParams {
-  checkValidInputs: () => [string[], string[], Error | undefined]
-  setSubmitError: (error: any) => void
-  records: any[]
+  checkValidInputs: () => [string[], string[], Error | undefined];
+  setSubmitError: (error: any) => void;
+  records: any[];
 }
 
 export const transformInputs = ({
@@ -21,23 +21,23 @@ export const transformInputs = ({
   setSubmitError,
   records,
 }: ValidateInputsParams): [any | void, string[], string[]] => {
-  const [_recipients, _amounts, error] = checkValidInputs()
+  const [_recipients, _amounts, error] = checkValidInputs();
   if (error) {
-    return [setSubmitError(error), [], []]
+    return [setSubmitError(error), [], []];
   }
   const fullSendAmount = _amounts
     .map((e: any) => parseInt(e))
-    .reduce((acc: any, cur: any) => acc + cur)
+    .reduce((acc: any, cur: any) => acc + cur);
   const amountRecords = records.map((r) =>
-    parseInt(r.data.microcredits.replace('u64.private', ''))
-  )
-  console.log(_recipients, _amounts, fullSendAmount, amountRecords)
+    parseInt(r.data.microcredits.replace("u64.private", ""))
+  );
+  console.log(_recipients, _amounts, fullSendAmount, amountRecords);
   // let recordToSend = `{"id":"0cffac49-db2b-5c4c-96e0-20b17479db09","owner":"aleo1dfcshh08exxrljt68t5he8ynwt20hfh9yqudukg2r4n5mpljpqzs9ggxw9","program_id":"credits.aleo","spent":false,"recordName":"credits","data":{"microcredits":"4896500u64.private"}}`
-  let recordToSend
+  let recordToSend;
   for (let i = 0; i < records.length; i++) {
-    const amountRec = amountRecords[i]
-    if (amountRec < fullSendAmount) continue
-    recordToSend = records[i]
+    const amountRec = amountRecords[i];
+    if (amountRec < fullSendAmount) continue;
+    recordToSend = records[i];
   }
   //   if (!recordToSend) {
   // return [
@@ -46,17 +46,17 @@ export const transformInputs = ({
   //   [],
   // ]
   //   }
-  return [recordToSend, _recipients, _amounts]
-}
+  return [recordToSend, _recipients, _amounts];
+};
 
 interface HandleSubmitWalletExtensionParams {
-  publicKey: string
-  wallet: Wallet | null
-  setTransactionId: (txId: string) => void
-  recordToSend: any
-  recipients: string[]
-  amounts: string[]
-  setSubmitError: (error: any) => void
+  publicKey: string;
+  wallet: Wallet | null;
+  setTransactionId: (txId: string) => void;
+  recordToSend: any;
+  recipients: string[];
+  amounts: string[];
+  setSubmitError: (error: any) => void;
 }
 
 export const handleSubmitWalletExtension = async ({
@@ -74,31 +74,32 @@ export const handleSubmitWalletExtension = async ({
 
   const inputs = [
     recordToSend,
-    JSON.stringify(createAddressesInput(recipients)).replaceAll('"', ''),
-    JSON.stringify(createAmountsInput(amounts)).replaceAll('"', ''),
-  ]
+    JSON.stringify(createAddressesInput(recipients)).replaceAll('"', ""),
+    JSON.stringify(createAmountsInput(amounts)).replaceAll('"', ""),
+  ];
+  console.log("inputs", inputs);
 
   const aleoTransaction = Transaction.createTransaction(
     publicKey,
     WalletAdapterNetwork.Testnet,
-    'disperse_all_fifteen.aleo',
+    "distrofund_private_transfer.aleo",
     // 'disperse_milion_test.aleo',
-    'main',
+    "main",
     inputs,
     500000
-  )
+  );
 
   try {
     const txId =
       (await (wallet?.adapter as LeoWalletAdapter).requestTransaction(
         aleoTransaction
-      )) || ''
+      )) || "";
     // if (event.target?.value) {
     //   event.target.elements[0].value = '';
     // }
-    setTransactionId(txId)
-    console.log('txId', txId)
+    setTransactionId(txId);
+    console.log("txId", txId);
   } catch (e) {
-    setSubmitError(e)
+    setSubmitError(e);
   }
-}
+};

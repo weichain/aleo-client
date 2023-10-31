@@ -1,24 +1,26 @@
-import { useState, useEffect, useMemo, MouseEvent } from 'react'
-import Popup from 'reactjs-popup'
-import 'reactjs-popup/dist/index.css'
-import Table from '../Table/Table'
-import { Row } from 'react-table'
-import './PopupReview.css'
-import Button from '../Button/Button'
-import { useAppContext } from '../../state/context'
-import { useWallet } from '@demox-labs/aleo-wallet-adapter-react'
-import { handleSubmitWalletExtension } from '../CreateTransaction/handlers/extensionHandler'
-import { handleMultiMethodSubmit } from '../CreateTransaction/handlers/sdkHandler'
+import { useState, useEffect, useMemo, MouseEvent } from "react";
+import Popup from "reactjs-popup";
+import "reactjs-popup/dist/index.css";
+import Table from "../Table/Table";
+import { Row } from "react-table";
+import "./PopupReview.css";
+import Button from "../Button/Button";
+import { useAppContext } from "../../state/context";
+import { useWallet } from "@demox-labs/aleo-wallet-adapter-react";
+import { handleSubmitWalletExtension } from "../CreateTransaction/handlers/extensionHandler";
+import { handleMultiMethodSubmit } from "../CreateTransaction/handlers/sdkHandler";
 
-interface PopupReviewProps {
-  accounts: string[]
-  amounts: string[]
-  setTransactionId: (txId: string) => void
-  recordToSend: any
-  checkValidInputs: () => [string[], string[], Error | undefined]
-  setSubmitError: (error: any) => void
-  record: any
-}
+type PopupReviewProps = {
+  accounts: string[];
+  amounts: string[];
+  setTransactionId: (txId: string) => void;
+  recordToSend: any;
+  checkValidInputs: () => [string[], string[], Error | undefined];
+  setSubmitError: (error: any) => void;
+  record: any;
+  privateKey: string | undefined;
+  // aleoWorker: Worker | undefined;
+};
 
 const PopupReview = ({
   accounts,
@@ -28,64 +30,66 @@ const PopupReview = ({
   checkValidInputs,
   setSubmitError,
   record,
-}: PopupReviewProps) => {
-  const { publicKey, wallet } = useWallet()
-  const [open, setOpen] = useState<boolean>()
-  const [data, setData] = useState<any[]>([])
-  const [totalAmount, setTotalAmount] = useState<string>()
-  const closeModal = () => setOpen(false)
-  const { mapping, balanceAllRecords, records } = useAppContext()!
+  privateKey,
+} // aleoWorker,
+: PopupReviewProps) => {
+  const { publicKey, wallet } = useWallet();
+  const [open, setOpen] = useState<boolean>();
+  const [data, setData] = useState<any[]>([]);
+  const [totalAmount, setTotalAmount] = useState<string>();
+  const closeModal = () => setOpen(false);
+  const { mapping, balanceAllRecords, records } = useAppContext()!;
 
   const calcBalance = () => {
-    return (Number(mapping) + Number(balanceAllRecords)).toFixed(6)
-  }
+    return (Number(mapping) + Number(balanceAllRecords)).toFixed(6);
+  };
 
   useEffect(() => {
-    setOpen(accounts?.length > 0)
-    let data = []
-    let total = 0
+    setOpen(accounts?.length > 0);
+    let data = [];
+    let total = 0;
     for (let i = 0; i < accounts.length; i++) {
-      const account = accounts[i]
-      const amount = parseInt(amounts[i]) / 10 ** 6
-      total += amount
-      data.push({ account, amount })
+      const account = accounts[i];
+      const amount = parseInt(amounts[i]) / 10 ** 6;
+      total += amount;
+      data.push({ account, amount });
     }
-    setData(data)
-    setTotalAmount(total.toFixed(6))
-  }, [accounts, amounts])
+    setData(data);
+    setTotalAmount(total.toFixed(6));
+  }, [accounts, amounts]);
 
   const columns = useMemo(
     () => [
       {
-        Header: 'Address',
-        accessor: 'account',
+        Header: "Address",
+        accessor: "account",
       },
       {
-        Header: 'Amount',
-        accessor: 'amount',
+        Header: "Amount",
+        accessor: "amount",
       },
     ],
     []
-  )
+  );
 
   const createRow = (row: Row) => {
     return (
       <tr {...row.getRowProps()}>
         {row.cells.map((cell) => {
           return (
-            <td style={{ paddingRight: '1em' }} {...cell.getCellProps()}>
+            <td style={{ paddingRight: "1em" }} {...cell.getCellProps()}>
               {cell.value}
             </td>
-          )
+          );
         })}
       </tr>
-    )
-  }
+    );
+  };
 
   const handleSubmit = (
     event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
   ) => {
-    event.preventDefault()
+    event.preventDefault();
     try {
       publicKey
         ? handleSubmitWalletExtension({
@@ -97,11 +101,18 @@ const PopupReview = ({
             recipients: accounts,
             setSubmitError,
           })
-        : handleMultiMethodSubmit({ checkValidInputs, record, setSubmitError })
+        : handleMultiMethodSubmit({
+            checkValidInputs,
+            record,
+            setSubmitError,
+            privateKey,
+            setTransactionId,
+            // aleoWorker
+          });
     } catch (e) {
-      console.log('e', e)
+      console.log("e", e);
     }
-  }
+  };
 
   return (
     <Popup className="custom-popup" open={open} onClose={closeModal}>
@@ -120,7 +131,7 @@ const PopupReview = ({
       <div className="nfo">
         <div>
           <span>Total:</span>
-          <span>{parseFloat(totalAmount ?? '0')} Aleo</span>
+          <span>{parseFloat(totalAmount ?? "0")} Aleo</span>
         </div>
         {publicKey && (
           <>
@@ -131,7 +142,7 @@ const PopupReview = ({
             <div>
               <span>Remaining:</span>
               <span>
-                {parseFloat(calcBalance()) - parseFloat(totalAmount ?? '0')}{' '}
+                {parseFloat(calcBalance()) - parseFloat(totalAmount ?? "0")}{" "}
                 Aleo
               </span>
             </div>
@@ -144,7 +155,7 @@ const PopupReview = ({
         text="Submit"
       ></Button>
     </Popup>
-  )
-}
+  );
+};
 
-export default PopupReview
+export default PopupReview;

@@ -4,7 +4,8 @@ import { WalletMultiButton } from '@demox-labs/aleo-wallet-adapter-reactui'
 import logo from './svg/aleo.svg'
 import { ExternalLink } from 'react-external-link'
 
-require('@demox-labs/aleo-wallet-adapter-reactui/dist/styles.css')
+// require('@demox-labs/aleo-wallet-adapter-reactui/dist/styles.css')
+import "@demox-labs/aleo-wallet-adapter-reactui/dist/styles.css"
 
 const Header = () => {
   return (
