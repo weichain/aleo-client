@@ -64,13 +64,16 @@ const appConfig = {
       },
       {
         test: /\.aleo$/i,
-        use: 'raw-loader',
+        use: "raw-loader",
       },
     ],
   },
   plugins: [
     new CopyPlugin({
-      patterns: [{ from: "public", to: "public" }, { from: "_headers", to: "." }],
+      patterns: [
+        { from: "public", to: "public" },
+        { from: "_headers", to: "." },
+      ],
     }),
     new HtmlWebpackPlugin({
       template: "./index.html",
@@ -83,11 +86,13 @@ const appConfig = {
   },
   optimization: {
     minimize: true,
-    minimizer: [new TerserPlugin({
-      terserOptions: {
-        module: true,
-      }
-    })],
+    minimizer: [
+      new TerserPlugin({
+        terserOptions: {
+          module: true,
+        },
+      }),
+    ],
   },
   stats: {
     warnings: false,
