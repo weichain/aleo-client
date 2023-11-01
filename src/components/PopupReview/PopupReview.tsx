@@ -142,7 +142,9 @@ const PopupReview = ({
             <div>
               <span>Remaining:</span>
               <span>
-                {parseFloat(calcBalance()) - parseFloat(totalAmount ?? '0')}{' '}
+                {(
+                  parseFloat(calcBalance()) - parseFloat(totalAmount ?? '0')
+                ).toFixed(6)}{' '}
                 Aleo
               </span>
             </div>

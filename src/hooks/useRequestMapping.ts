@@ -7,11 +7,8 @@ export const useRequestMapping = () => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
-  // if (!publicKey) throw new WalletNotConnectedError();
-
-  useEffect(() => {
+  const getMapping = async () => {
     if (!publicKey) return
-    setLoading(true)
     fetch(
       `https://vm.aleo.org/api/testnet3/program/credits.aleo/mapping/account/${publicKey}`
     )
@@ -24,6 +21,14 @@ export const useRequestMapping = () => {
         setError(e)
         setLoading(false)
       })
+    await new Promise(f => setTimeout(f, 15000));
+    getMapping()
+  }
+
+  useEffect(() => {
+    if (!publicKey) return
+    setLoading(true)
+    getMapping()
   }, [publicKey])
 
   return { mapping, loading, error }

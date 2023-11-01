@@ -68,6 +68,7 @@ export const handleSubmitWalletExtension = async ({
     JSON.stringify(createAddressesInput(recipients)).replaceAll('"', ''),
     JSON.stringify(createAmountsInput(amounts)).replaceAll('"', ''),
   ]
+
   const transition = getTransitionsNames(recipients.length)
   const aleoTransaction = Transaction.createTransaction(
     publicKey,
@@ -75,7 +76,7 @@ export const handleSubmitWalletExtension = async ({
     'distrofund_private_transfer.aleo',
     transition,
     inputs,
-    9000
+    100000
   )
 
   try {

@@ -10,13 +10,14 @@ export const useRequestRecords = () => {
 
   const { records, setRecords } = useAppContext()!
 
-  // if (!publicKey) throw new WalletNotConnectedError();
-
-  useEffect(() => {
+  const getRecords = async () => {
     if (!publicKey) return
-    setLoading(true)
     requestRecords!('credits.aleo')
       .then((value: any) => {
+        console.log('value', value);
+        console.log('value unspent', value.filter((r: any) => !r.spent));
+        console.log('value spent', value.filter((r: any) => r.spent));
+        
         setRecords(value.filter((r: any) => !r.spent))
         setLoading(false)
       })
@@ -24,6 +25,14 @@ export const useRequestRecords = () => {
         setError(e)
         setLoading(false)
       })
+    await new Promise(f => setTimeout(f, 15000));
+    getRecords()
+  }
+
+  useEffect(() => {
+    if (!publicKey) return
+    setLoading(true)
+    getRecords()
   }, [publicKey])
 
   return { records, loading, error }

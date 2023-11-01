@@ -8,11 +8,8 @@ export const useRequestTransactionHistory = () => {
   const [error, setError] = useState(null)
 
   // if (!publicKey) throw new WalletNotConnectedError();
-
-  useEffect(() => {
+  const getTxHistory = async () => {
     if (!publicKey) return
-    setLoading(true)
-    // fetch(`https://vm.aleo.org/api/testnet3/program/credits.aleo/mapping/account/${publicKey}`)
     requestTransactionHistory!('credits.aleo')
       .then((data: any) => {
         // const recordsFormatted = recs.filter((rec: any) => rec.spent === false)
@@ -24,6 +21,13 @@ export const useRequestTransactionHistory = () => {
         setError(e)
         setLoading(false)
       })
+    await new Promise(f => setTimeout(f, 15000));
+    getTxHistory()
+  }
+
+  useEffect(() => {
+    setLoading(true)
+    getTxHistory()
   }, [publicKey])
 
   return { txHistory, loading, error }

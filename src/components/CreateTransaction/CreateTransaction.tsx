@@ -32,7 +32,7 @@ const CreateTransaction = () => {
 
   useEffect(() => {
     let intervalId: NodeJS.Timeout | undefined
-
+    if (!publicKey) return
     if (transactionId) {
       intervalId = setInterval(() => {
         getTransactionStatus(transactionId!)
@@ -165,7 +165,7 @@ const CreateTransaction = () => {
           privateKey={privateKey}
         />
       )}
-      {transactionId && publicKey && (
+      {transactionId && (
         <>
           Wallet transaction ID- <span>{transactionId}</span>
           {status && (
