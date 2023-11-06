@@ -11,22 +11,16 @@ import { LeoWalletAdapter } from '@demox-labs/aleo-wallet-adapter-leo'
 import { Wallet } from '@demox-labs/aleo-wallet-adapter-react'
 import { getTransitionsNames } from '../../../utils/transitionNames'
 
-interface ValidateInputsParams {
-  checkValidInputs: () => [string[], string[], Error | undefined]
-  setSubmitError: (error: any) => void
+type ValidateInputsParams = {
   records: any[]
+  amounts: number[]
 }
 
-export const transformInputs = ({
-  checkValidInputs,
-  setSubmitError,
+export const getSentRecord = ({
   records,
-}: ValidateInputsParams): [any | void, string[], string[]] => {
-  const [_recipients, _amounts, error] = checkValidInputs()
-  if (error) {
-    return [setSubmitError(error), [], []]
-  }
-  const fullSendAmount = _amounts
+  amounts,
+}: ValidateInputsParams): any | void => {
+  const fullSendAmount = amounts
     .map((e: any) => parseInt(e))
     .reduce((acc: any, cur: any) => acc + cur)
   const amountRecords = records.map((r) =>
@@ -41,7 +35,7 @@ export const transformInputs = ({
   if (!recordToSend) {
     recordToSend = new Error('Could not find record to send')
   }
-  return [recordToSend, _recipients, _amounts]
+  return recordToSend
 }
 
 interface HandleSubmitWalletExtensionParams {
@@ -50,7 +44,7 @@ interface HandleSubmitWalletExtensionParams {
   setTransactionId: (txId: string) => void
   recordToSend: any
   recipients: string[]
-  amounts: string[]
+  amounts: number[]
   setSubmitError: (error: any) => void
 }
 

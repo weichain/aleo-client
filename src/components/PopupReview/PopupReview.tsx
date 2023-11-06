@@ -12,10 +12,9 @@ import { handleMultiMethodSubmit } from '../CreateTransaction/handlers/sdkHandle
 
 type PopupReviewProps = {
   accounts: string[]
-  amounts: string[]
+  amounts: number[]
   setTransactionId: (txId: string) => void
   recordToSend: any
-  checkValidInputs: () => [string[], string[], Error | undefined]
   setSubmitError: (error: any) => void
   record: any
   privateKey: string | undefined
@@ -27,7 +26,6 @@ const PopupReview = ({
   amounts,
   setTransactionId,
   recordToSend,
-  checkValidInputs,
   setSubmitError,
   record,
   privateKey, // aleoWorker,
@@ -49,7 +47,7 @@ const PopupReview = ({
     let total = 0
     for (let i = 0; i < accounts.length; i++) {
       const account = accounts[i]
-      const amount = parseInt(amounts[i]) / 10 ** 6
+      const amount = amounts[i] / 10 ** 6
       total += amount
       data.push({ account, amount })
     }
@@ -101,11 +99,12 @@ const PopupReview = ({
             setSubmitError,
           })
         : handleMultiMethodSubmit({
-            checkValidInputs,
             record,
             setSubmitError,
             privateKey,
             setTransactionId,
+            recipients: accounts,
+            amounts,
             // aleoWorker
           })
       closeModal()

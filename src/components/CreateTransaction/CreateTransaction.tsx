@@ -5,22 +5,96 @@ import { useWallet } from '@demox-labs/aleo-wallet-adapter-react'
 import { useAppContext } from '../../state/context'
 
 import PopupError from '../PopupError/PopupError'
-import { transformInputs } from './handlers/extensionHandler'
+import { getSentRecord } from './handlers/extensionHandler'
 import PopupReview from '../PopupReview/PopupReview'
 import { LeoWalletAdapter } from '@demox-labs/aleo-wallet-adapter-leo'
 
-interface WalletSendInputs {
+// Import the necessary modules
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import * as z from 'zod'
+
+type WalletSendInputs = {
   recordToSend: any
   recipients: string[]
-  amounts: string[]
+  amounts: number[]
+  privateKey?: string
+  record?: string
 }
+
+type FormData = {
+  recipients: string | string[]
+  amounts: string | number[]
+  privateKey?: string
+  record?: string
+}
+
+// Define a schema for your form data using Zod
+const schema: z.ZodType<FormData> = z
+  .object({
+    recipients: z
+      .string()
+      .min(1, { message: 'Recepients inputs are empty' })
+      .transform((arg) => arg.split('\n').map((r) => r.trim()))
+      .refine(
+        (arg: string[]) => {
+          for (let i = 0; i < arg.length; i++) {
+            const recipient = arg[i]
+            if (!/^aleo1[a-z0-9]{58}$/.test(recipient)) {
+              return false
+            }
+          }
+          return true
+        },
+        { message: 'Invalid Aleo address' }
+      ),
+    amounts: z
+      .string()
+      .min(1, { message: 'Amounts inputs are empty' })
+      .transform((arg) => arg.split('\n').map((r) => Number(r.trim())))
+      .refine(
+        (arg: number[]) => {
+          for (let i = 0; i < arg.length; i++) {
+            const amount = arg[i]
+            if (isNaN(amount) || amount <= 0) return false
+          }
+          return true
+        },
+        { message: 'All amounts must be larger than 0' }
+      ),
+    privateKey: z.string().optional(),
+    record: z.string().optional(),
+  })
+  .superRefine(({ recipients, amounts }, ctx) => {
+    if (
+      recipients.length !== amounts.length ||
+      recipients.length > 15 ||
+      amounts.length > 15
+    ) {
+      const message = 'Recepients and amounts count do not match'
+      ctx.addIssue({
+        code: 'custom',
+        message,
+        path: ['recipients'],
+      })
+      ctx.addIssue({
+        code: 'custom',
+        message,
+        path: ['amounts'],
+      })
+    }
+  })
 
 const CreateTransaction = () => {
   const { publicKey, wallet } = useWallet()
-  const [recipients, setRecipients] = useState<string>()
-  const [amounts, setAmounts] = useState<string>()
-  const [privateKey, setPrivateKey] = useState<string>()
-  const [record, setRecord] = useState<string>()
+  // Use the useForm hook with the zodResolver and the schema
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>({
+    resolver: zodResolver(schema),
+  })
   const [transactionId, setTransactionId] = useState<string>()
   const [submitError, setSubmitError] = useState<Error | undefined>()
   const { records } = useAppContext()!
@@ -53,52 +127,24 @@ const CreateTransaction = () => {
     setStatus(status)
   }
 
-  const checkValidInputs = (): [string[], string[], Error | undefined] => {
-    let _recipients: string[] = []
-    let _amounts: string[] = []
-    let error: Error | undefined
-    if (!recipients || !amounts) {
-      error = new Error('Recepients or amounts inputs are empty')
-      return [_recipients, _amounts, error]
-    }
-    _recipients = recipients.split('\n').map((r) => r.trim())
-    _amounts = amounts.split('\n').map((n) => n.trim())
-    if (
-      _recipients.length !== _amounts.length ||
-      _recipients.length > 15 ||
-      _amounts.length > 15
-    ) {
-      error = new Error('Recepients and amounts count do not match')
-      return [_recipients, _amounts, error]
-    }
+  const onSubmit = ({ recipients, amounts, record, privateKey }: FormData) => {
+    console.log('errrors', errors)
 
-    for (let i = 0; i < _recipients.length; i++) {
-      const recipient = _recipients[i]
-      const amount = parseInt(_amounts[i])
-      if (!/^aleo1[a-z0-9]{58}$/.test(recipient)) {
-        error = new Error(`Not valid Aleo address "${recipient}"`)
-        return [_recipients, _amounts, error]
-      }
-      if (isNaN(amount) || amount < 0) {
-        error = new Error('All amounts must be larger than 0')
-        return [_recipients, _amounts, error]
-      }
-    }
-    return [_recipients, _amounts, error]
-  }
-
-  const handleSubmit = (
-    event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
-  ) => {
-    event.preventDefault()
+    const _recipients = recipients as string[]
+    const _amounts = amounts as number[]
     // wallet
-    const [recordToSend, recipients, amounts] = transformInputs({
-      checkValidInputs,
+    const recordToSend = getSentRecord({
       records,
-      setSubmitError,
+      amounts: _amounts,
     })
-    setWalletSendInputs({ recordToSend, recipients, amounts })
-    setShowPopupReview(recipients.length > 0)
+    setWalletSendInputs({
+      recordToSend,
+      recipients: _recipients,
+      amounts: _amounts,
+      record,
+      privateKey,
+    })
+    setShowPopupReview(errors.root?.message ? true : false)
   }
 
   return (
@@ -108,12 +154,11 @@ const CreateTransaction = () => {
           <label htmlFor="privateKey">Private Key</label>
           <textarea
             id="privateKey"
-            value={privateKey}
-            onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
-              setPrivateKey(e.target.value)
-            }
+            // Register your input using the register function and the name of the field
+            {...register('privateKey')}
             placeholder="Enter Private Key"
           />
+          {errors.privateKey && <p>{errors.privateKey.message}</p>}
         </div>
       )}
       {!publicKey && (
@@ -121,48 +166,45 @@ const CreateTransaction = () => {
           <label htmlFor="record">Record</label>
           <textarea
             id="record"
-            value={record}
-            onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
-              setRecord(e.target.value)
-            }
+            // Register your input using the register function and the name of the field
+            {...register('record')}
             placeholder="Enter Record"
           />
+          {errors.record && <p>{errors.record.message}</p>}
         </div>
       )}
       <div className="input-group">
         <label htmlFor="recipients">Recipients</label>
         <textarea
           id="recipients"
-          value={recipients}
-          onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
-            setRecipients(e.target.value)
-          }
+          // Register your input using the register function and the name of the field
+          {...register('recipients')}
           placeholder="Enter list of addresses. Each address must be on new line."
         />
+
+        {errors.recipients && <p>{errors.recipients.message}</p>}
       </div>
       <div className="input-group">
         <label htmlFor="amounts">Amounts</label>
         <textarea
           id="amounts"
-          value={amounts}
-          onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
-            setAmounts(e.target.value)
-          }
+          // Register your input using the register function and the name of the field
+          {...register('amounts')}
           placeholder="Enter list of amounts. Each amount must be on new line. Format in microcredits e.g. 1000000 = 1 Aleo, 100000 = 0.1 Aleo"
         />
+        {errors.amounts && <p>{errors.amounts.message}</p>}
       </div>
-      <Button text={'Send'} onClick={handleSubmit} />
+      <Button text={'Send'} onClick={handleSubmit(onSubmit)} />
       <PopupError message={submitError} />
       {showPopupReview && (
         <PopupReview
           accounts={walletSendInputs?.recipients ?? []}
           amounts={walletSendInputs?.amounts ?? []}
-          checkValidInputs={checkValidInputs}
-          record={record}
+          record={walletSendInputs?.record}
           recordToSend={walletSendInputs?.recordToSend}
           setSubmitError={setSubmitError}
           setTransactionId={setTransactionId}
-          privateKey={privateKey}
+          privateKey={walletSendInputs?.privateKey}
         />
       )}
       {transactionId && (
