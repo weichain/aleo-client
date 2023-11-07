@@ -1,21 +1,27 @@
-import { ChangeEvent, MouseEvent, useState, useEffect } from 'react'
-import './CreateTransaction.css'
-import Button from '../Button/Button'
-import { useWallet } from '@demox-labs/aleo-wallet-adapter-react'
-import { useAppContext } from '../../state/context'
-
-import PopupError from '../PopupError/PopupError'
-import { getSentRecord } from './handlers/extensionHandler'
-import PopupReview from '../PopupReview/PopupReview'
 import { LeoWalletAdapter } from '@demox-labs/aleo-wallet-adapter-leo'
-
-// Import the necessary modules
-import { useForm } from 'react-hook-form'
+import { useWallet } from '@demox-labs/aleo-wallet-adapter-react'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useEffect, useState } from 'react'
+import Dropdown, { Option } from 'react-dropdown'
+import 'react-dropdown/style.css'
+import { useForm } from 'react-hook-form'
 import * as z from 'zod'
 
+import { useAppContext } from '../../state/context'
+import { TransferTypes } from '../../types/transferTypes'
+import Button from '../Button/Button'
+import PopupError from '../PopupError/PopupError'
+import PopupReview from '../PopupReview/PopupReview'
+import './CreateTransaction.css'
+
+const dropDownOpts = [
+  { value: TransferTypes.private, label: 'Private' },
+  { value: TransferTypes.public, label: 'Public' },
+  { value: TransferTypes.privateToPublic, label: 'Private To Public' },
+  { value: TransferTypes.publicToPrivate, label: 'Public To Private' },
+]
+
 type WalletSendInputs = {
-  recordToSend: any
   recipients: string[]
   amounts: number[]
   privateKey?: string
@@ -29,7 +35,6 @@ type FormData = {
   record?: string
 }
 
-// Define a schema for your form data using Zod
 const schema: z.ZodType<FormData> = z
   .object({
     recipients: z
@@ -87,7 +92,15 @@ const schema: z.ZodType<FormData> = z
 
 const CreateTransaction = () => {
   const { publicKey, wallet } = useWallet()
-  // Use the useForm hook with the zodResolver and the schema
+  const [transactionId, setTransactionId] = useState<string>()
+  const [submitError, setSubmitError] = useState<Error | undefined>()
+  const { records, setTransferType } = useAppContext()!
+  const [showPopupReview, setShowPopupReview] = useState<boolean>()
+  const [walletSendInputs, setWalletSendInputs] = useState<
+    WalletSendInputs | undefined
+  >()
+  const [status, setStatus] = useState<string>()
+
   const {
     register,
     handleSubmit,
@@ -95,14 +108,6 @@ const CreateTransaction = () => {
   } = useForm<FormData>({
     resolver: zodResolver(schema),
   })
-  const [transactionId, setTransactionId] = useState<string>()
-  const [submitError, setSubmitError] = useState<Error | undefined>()
-  const { records } = useAppContext()!
-  const [showPopupReview, setShowPopupReview] = useState<boolean>()
-  const [walletSendInputs, setWalletSendInputs] = useState<
-    WalletSendInputs | undefined
-  >()
-  const [status, setStatus] = useState<string>()
 
   useEffect(() => {
     let intervalId: NodeJS.Timeout | undefined
@@ -128,27 +133,38 @@ const CreateTransaction = () => {
   }
 
   const onSubmit = ({ recipients, amounts, record, privateKey }: FormData) => {
-    console.log('errrors', errors)
-
     const _recipients = recipients as string[]
     const _amounts = amounts as number[]
     // wallet
-    const recordToSend = getSentRecord({
-      records,
-      amounts: _amounts,
-    })
+
     setWalletSendInputs({
-      recordToSend,
       recipients: _recipients,
       amounts: _amounts,
       record,
       privateKey,
     })
-    setShowPopupReview(errors.root?.message ? true : false)
+
+    setShowPopupReview(errors.root?.message ? false : true)
+  }
+
+  const onChange = (option: Option) => {
+    setTransferType(option.value as TransferTypes)
   }
 
   return (
     <div className="component">
+      <div className="dropdown-holder">
+        <div className="empty"></div>
+        <div className="dropdown">
+          <span>Transfer Type</span>
+          <Dropdown
+            options={dropDownOpts}
+            onChange={onChange}
+            value={dropDownOpts[0]}
+            placeholder="Select transfer type"
+          />
+        </div>
+      </div>
       {!publicKey && (
         <div className="input-group">
           <label htmlFor="privateKey">Private Key</label>
@@ -198,10 +214,9 @@ const CreateTransaction = () => {
       <PopupError message={submitError} />
       {showPopupReview && (
         <PopupReview
-          accounts={walletSendInputs?.recipients ?? []}
+          recipients={walletSendInputs?.recipients ?? []}
           amounts={walletSendInputs?.amounts ?? []}
           record={walletSendInputs?.record}
-          recordToSend={walletSendInputs?.recordToSend}
           setSubmitError={setSubmitError}
           setTransactionId={setTransactionId}
           privateKey={walletSendInputs?.privateKey}

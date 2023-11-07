@@ -21,7 +21,7 @@ export const useRequestMapping = () => {
         setError(e)
         setLoading(false)
       })
-    await new Promise(f => setTimeout(f, 15000));
+    await new Promise((f) => setTimeout(f, 15000))
     getMapping()
   }
 

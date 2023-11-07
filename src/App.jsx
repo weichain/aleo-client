@@ -1,15 +1,16 @@
-import React, { useMemo } from 'react'
-import './App.css'
-import Home from './pages/Home/Home'
-import { LeoWalletAdapter } from '@demox-labs/aleo-wallet-adapter-leo'
-import { WalletProvider } from '@demox-labs/aleo-wallet-adapter-react'
 import {
   DecryptPermission,
   WalletAdapterNetwork,
 } from '@demox-labs/aleo-wallet-adapter-base'
+import { LeoWalletAdapter } from '@demox-labs/aleo-wallet-adapter-leo'
+import { WalletProvider } from '@demox-labs/aleo-wallet-adapter-react'
 import { WalletModalProvider } from '@demox-labs/aleo-wallet-adapter-reactui'
+import React, { useMemo } from 'react'
+
+import './App.css'
+import Home from './pages/Home/Home'
 import { AppContextProvider } from './state/context'
-import { AleoWorker } from "./workers/AleoWorker.js";
+import { AleoWorker } from './workers/AleoWorker.js'
 
 // const aleoWorker = AleoWorker();
 
@@ -32,7 +33,7 @@ function App() {
     >
       <WalletModalProvider>
         <AppContextProvider>
-          <Home/>
+          <Home />
         </AppContextProvider>
       </WalletModalProvider>
     </WalletProvider>
@@ -40,7 +41,6 @@ function App() {
 }
 
 export default App
-
 
 // import { useState } from "react";
 // import reactLogo from "./assets/react.svg";

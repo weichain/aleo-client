@@ -1,11 +1,12 @@
-import { useEffect, useMemo, useState } from 'react'
 import { useWallet } from '@demox-labs/aleo-wallet-adapter-react'
-import { useRequestTransactionHistory } from '../../hooks/useRequestTransactionHistory'
-import './TransactionHistory.css'
-import Table from '../Table/Table'
-import { Row } from 'react-table'
+import { useEffect, useMemo, useState } from 'react'
 import { ExternalLink } from 'react-external-link'
+import { Row } from 'react-table'
+
+import { useRequestTransactionHistory } from '../../hooks/useRequestTransactionHistory'
+import Table from '../Table/Table'
 import TruncateText from '../TruncateText/TruncateText'
+import './TransactionHistory.css'
 
 const TransactionHistory = () => {
   const { publicKey } = useWallet()

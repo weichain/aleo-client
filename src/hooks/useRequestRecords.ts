@@ -1,6 +1,7 @@
 import { WalletNotConnectedError } from '@demox-labs/aleo-wallet-adapter-base'
 import { useWallet } from '@demox-labs/aleo-wallet-adapter-react'
 import { useEffect, useState } from 'react'
+
 import { useAppContext } from '../state/context'
 
 export const useRequestRecords = () => {
@@ -14,10 +15,15 @@ export const useRequestRecords = () => {
     if (!publicKey) return
     requestRecords!('credits.aleo')
       .then((value: any) => {
-        console.log('value', value);
-        console.log('value unspent', value.filter((r: any) => !r.spent));
-        console.log('value spent', value.filter((r: any) => r.spent));
-        
+        console.log(
+          'value unspent',
+          value.filter((r: any) => !r.spent)
+        )
+        console.log(
+          'value spent',
+          value.filter((r: any) => r.spent)
+        )
+
         setRecords(value.filter((r: any) => !r.spent))
         setLoading(false)
       })
@@ -25,7 +31,7 @@ export const useRequestRecords = () => {
         setError(e)
         setLoading(false)
       })
-    await new Promise(f => setTimeout(f, 15000));
+    await new Promise((f) => setTimeout(f, 15000))
     getRecords()
   }
 

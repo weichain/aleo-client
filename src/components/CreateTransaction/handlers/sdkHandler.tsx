@@ -1,10 +1,11 @@
-import { AddressesInput } from '../../../types/program'
 import * as aleo from '@aleohq/sdk'
-import { getTransitionsNames } from '../../../utils/transitionNames'
+
+import { AddressesInput } from '../../../types/program'
 import {
   createAddressesInput,
   createAmountsInput,
 } from '../../../utils/programInput'
+import { getTransitionsNames } from '../../../utils/transitionNames'
 import { AleoWorker } from '../../../workers/AleoWorker.js'
 
 const aleoWorker = AleoWorker()

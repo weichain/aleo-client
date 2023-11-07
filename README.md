@@ -55,8 +55,8 @@ Aleo programs deployed require unique names, make sure to edit the program's nam
    ```js
    // Use existing account with funds
    const account = new Account({
-     privateKey: "user1PrivateKey",
-   });
+     privateKey: 'user1PrivateKey',
+   })
    ```
 
 2. (Optional) Provide a fee record manually (located in commented code within `worker.js`)

@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react'
-import { useRequestRecords } from '../../hooks/useRequestRecords'
-import './Wallet.css'
-import { useRequestMapping } from '../../hooks/useRequestMapping'
-import { useRequestTransactionHistory } from '../../hooks/useRequestTransactionHistory'
 import { useWallet } from '@demox-labs/aleo-wallet-adapter-react'
+import React, { useEffect, useState } from 'react'
+
+import { useRequestMapping } from '../../hooks/useRequestMapping'
+import { useRequestRecords } from '../../hooks/useRequestRecords'
+import { useRequestTransactionHistory } from '../../hooks/useRequestTransactionHistory'
 import { useAppContext } from '../../state/context'
+import './Wallet.css'
 
 const Wallet = () => {
   const { publicKey } = useWallet()

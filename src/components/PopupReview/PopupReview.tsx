@@ -1,20 +1,19 @@
-import { useState, useEffect, useMemo, MouseEvent } from 'react'
+import { useWallet } from '@demox-labs/aleo-wallet-adapter-react'
+import { MouseEvent, useEffect, useMemo, useState } from 'react'
+import { Row } from 'react-table'
 import Popup from 'reactjs-popup'
 import 'reactjs-popup/dist/index.css'
-import Table from '../Table/Table'
-import { Row } from 'react-table'
-import './PopupReview.css'
-import Button from '../Button/Button'
+
 import { useAppContext } from '../../state/context'
-import { useWallet } from '@demox-labs/aleo-wallet-adapter-react'
-import { handleSubmitWalletExtension } from '../CreateTransaction/handlers/extensionHandler'
 import { handleMultiMethodSubmit } from '../CreateTransaction/handlers/sdkHandler'
+import Table from '../Table/Table'
+import { TransferHandlerWalletExtension } from '../TransferHandlerWalletExtension/TransferHandlerWalletExtension'
+import './PopupReview.css'
 
 type PopupReviewProps = {
-  accounts: string[]
+  recipients: string[]
   amounts: number[]
   setTransactionId: (txId: string) => void
-  recordToSend: any
   setSubmitError: (error: any) => void
   record: any
   privateKey: string | undefined
@@ -22,10 +21,9 @@ type PopupReviewProps = {
 }
 
 const PopupReview = ({
-  accounts,
+  recipients: accounts,
   amounts,
   setTransactionId,
-  recordToSend,
   setSubmitError,
   record,
   privateKey, // aleoWorker,
@@ -83,35 +81,35 @@ const PopupReview = ({
     )
   }
 
-  const handleSubmit = (
-    event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
-  ) => {
-    event.preventDefault()
-    try {
-      publicKey
-        ? handleSubmitWalletExtension({
-            publicKey,
-            setTransactionId,
-            wallet,
-            recordToSend,
-            amounts,
-            recipients: accounts,
-            setSubmitError,
-          })
-        : handleMultiMethodSubmit({
-            record,
-            setSubmitError,
-            privateKey,
-            setTransactionId,
-            recipients: accounts,
-            amounts,
-            // aleoWorker
-          })
-      closeModal()
-    } catch (e) {
-      console.log('e', e)
-    }
-  }
+  // const handleSubmit = (
+  //   event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
+  // ) => {
+  //   event.preventDefault()
+  //   try {
+  //     publicKey
+  //       ? handleSubmitWalletExtension({
+  //           publicKey,
+  //           setTransactionId,
+  //           wallet,
+  //           recordToSend,
+  //           amounts,
+  //           recipients: accounts,
+  //           setSubmitError,
+  //         })
+  //       : handleMultiMethodSubmit({
+  //           record,
+  //           setSubmitError,
+  //           privateKey,
+  //           setTransactionId,
+  //           recipients: accounts,
+  //           amounts,
+  //           // aleoWorker
+  //         })
+  //     closeModal()
+  //   } catch (e) {
+  //     console.log('e', e)
+  //   }
+  // }
 
   return (
     <Popup className="custom-popup" open={open} onClose={closeModal}>
@@ -150,11 +148,12 @@ const PopupReview = ({
           </>
         )}
       </div>
-      <Button
-        className="submit-btn"
-        onClick={handleSubmit}
-        text="Submit"
-      ></Button>
+      <TransferHandlerWalletExtension
+        recipients={accounts}
+        amounts={amounts}
+        setSubmitError={setSubmitError}
+        setTransactionId={setTransactionId}
+      />
     </Popup>
   )
 }
