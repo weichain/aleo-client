@@ -12,7 +12,7 @@ export const createAddressesInput = (addresses: string[]): AddressesInput => {
   return addressesInput as AddressesInput
 }
 
-export const createAmountsInput = (amounts: string[]): AmountsInput => {
+export const createAmountsInput = (amounts: number[]): AmountsInput => {
   const amuntsInput: any = {}
   for (let i = 1; i <= amounts.length; i++) {
     const propertyName = `amount${i}`

@@ -1,34 +1,32 @@
-import { AddressesInput } from '../../../types/program'
 import * as aleo from '@aleohq/sdk'
-import {
-  getTransitionsNames,
-} from '../../../utils/transitionNames'
+
+import { AddressesInput } from '../../../types/program'
 import {
   createAddressesInput,
   createAmountsInput,
 } from '../../../utils/programInput'
+import { getTransitionsNames } from '../../../utils/transitionNames'
 import { AleoWorker } from '../../../workers/AleoWorker.js'
 
-const aleoWorker = AleoWorker();
+const aleoWorker = AleoWorker()
 
 interface handleMultiMethodSubmitParams {
-  checkValidInputs: () => [any, any, any]
   setSubmitError: (error: any) => void
   record: string | undefined
   privateKey: string | undefined
   setTransactionId: (txId: string) => void
+  recipients: string[]
+  amounts: number[]
   // aleoWorker: Worker
 }
 
-const checkValidPrivKey = (key: string) => {}
-
 export const handleMultiMethodSubmit = async ({
-  checkValidInputs,
   setSubmitError,
   record,
   privateKey,
   setTransactionId,
-  // aleoWorker
+  recipients,
+  amounts, // aleoWorker
 }: handleMultiMethodSubmitParams) => {
   if (!record) return setSubmitError(new Error('Selected is empty record'))
   let privateKeyObject
@@ -38,11 +36,7 @@ export const handleMultiMethodSubmit = async ({
     return setSubmitError(new Error('Enter private key'))
   }
 
-  const [_recipients, _amounts, error] = checkValidInputs()
-  const transition = getTransitionsNames(_recipients.length)
-
-  if (error) return setSubmitError(error)
-
+  const transition = getTransitionsNames(recipients.length)
 
   // automatic calc of fee left as comment since execution speeds are very slow; waiting for improvements
   // const executeFee = await programManager.executionEngine.estimateExecutionFee(
@@ -59,14 +53,21 @@ export const handleMultiMethodSubmit = async ({
   // console.log('fee: ', Number(executeFee))
 
   const inputAddresses = JSON.stringify(
-    createAddressesInput(_recipients)
+    createAddressesInput(recipients)
   ).replaceAll('"', '')
-  const inputAmounts = JSON.stringify(
-    createAmountsInput(_amounts)
-  ).replaceAll('"', '')
-  const transaction_id = await aleoWorker.executeProgram(privateKey, transition, record, inputAddresses, inputAmounts)
-  
-  if (transaction_id){
+  const inputAmounts = JSON.stringify(createAmountsInput(amounts)).replaceAll(
+    '"',
+    ''
+  )
+  const transaction_id = await aleoWorker.executeProgram(
+    privateKey,
+    transition,
+    record,
+    inputAddresses,
+    inputAmounts
+  )
+
+  if (transaction_id) {
     setTransactionId(transaction_id as string)
   }
 }

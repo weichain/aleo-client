@@ -1,37 +1,30 @@
 .modal {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .custom-popup-content {
-    width: 61%;
-    height: 40%;
-}
-
-.submit-btn {
-    position: absolute;
-    bottom: 1em;
-    right: 45%;
-    zoom: 1.2;
+  width: 61%;
+  height: 40%;
 }
 
 .label {
-    display: flex;
-    width: 100%;
-    justify-content: center;
+  display: flex;
+  width: 100%;
+  justify-content: center;
 }
 
 .nfo {
-    margin-top: 2em;
-    gap: 0.1em;
-    flex-direction: column;
-    display: flex;
-    width: 14em;
-    position: absolute;
-    bottom: 3em;
+  margin-top: 2em;
+  gap: 0.1em;
+  flex-direction: column;
+  display: flex;
+  width: 14em;
+  position: absolute;
+  bottom: 3em;
 
-    > div {
-        display: flex;
-        justify-content: space-between;
-    }
+  > div {
+    display: flex;
+    justify-content: space-between;
+  }
 }

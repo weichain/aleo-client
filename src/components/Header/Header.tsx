@@ -1,9 +1,10 @@
-import './Header.css' // import the CSS file
+// import the CSS file
 import { WalletMultiButton } from '@demox-labs/aleo-wallet-adapter-reactui'
-import Logo from '../../assets/aleo.svg'
+import '@demox-labs/aleo-wallet-adapter-reactui/dist/styles.css'
 import { ExternalLink } from 'react-external-link'
 
-import '@demox-labs/aleo-wallet-adapter-reactui/dist/styles.css'
+import Logo from '../../assets/aleo.svg'
+import './Header.css'
 
 const Header = () => {
   return (

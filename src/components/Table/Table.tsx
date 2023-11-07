@@ -1,4 +1,5 @@
-import { useTable, usePagination } from 'react-table'
+import { usePagination, useTable } from 'react-table'
+
 import './Table.css'
 
 interface InputParamsInterface {

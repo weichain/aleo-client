@@ -1,26 +1,25 @@
-import CopyPlugin from "copy-webpack-plugin";
-import TerserPlugin from "terser-webpack-plugin";
-import HtmlWebpackPlugin from "html-webpack-plugin";
-
-import path from "path";
+import CopyPlugin from 'copy-webpack-plugin'
+import HtmlWebpackPlugin from 'html-webpack-plugin'
+import path from 'path'
+import TerserPlugin from 'terser-webpack-plugin'
 
 const appConfig = {
-  mode: "production",
+  mode: 'production',
   entry: {
-    index: "./src/main.jsx",
+    index: './src/main.jsx',
   },
   output: {
-    path: path.resolve("dist"),
-    filename: "[name].bundle.js",
+    path: path.resolve('dist'),
+    filename: '[name].bundle.js',
   },
   resolve: {
-    extensions: [".js", ".wasm", ".jsx"],
+    extensions: ['.js', '.wasm', '.jsx'],
   },
   devServer: {
     port: 3000,
     headers: {
-      "Cross-Origin-Opener-Policy": "same-origin",
-      "Cross-Origin-Embedder-Policy": "require-corp",
+      'Cross-Origin-Opener-Policy': 'same-origin',
+      'Cross-Origin-Embedder-Policy': 'require-corp',
     },
     client: {
       overlay: false,
@@ -32,20 +31,20 @@ const appConfig = {
         test: /\.(js|jsx)$/,
         exclude: /nodeModules/,
         use: {
-          loader: "babel-loader",
+          loader: 'babel-loader',
         },
       },
       {
         test: /\.css$/,
-        use: ["style-loader", "css-loader"],
+        use: ['style-loader', 'css-loader'],
       },
       {
         test: /\.(png|jpe?g|gif)$/i,
         use: [
           {
-            loader: "file-loader",
+            loader: 'file-loader',
             options: {
-              name: "[path][name].[ext]",
+              name: '[path][name].[ext]',
             },
           },
         ],
@@ -54,7 +53,7 @@ const appConfig = {
         test: /\.svg$/,
         use: [
           {
-            loader: "svg-url-loader",
+            loader: 'svg-url-loader',
             options: {
               limit: 8192,
               noquotes: true,
@@ -64,19 +63,19 @@ const appConfig = {
       },
       {
         test: /\.aleo$/i,
-        use: "raw-loader",
+        use: 'raw-loader',
       },
     ],
   },
   plugins: [
     new CopyPlugin({
       patterns: [
-        { from: "public", to: "public" },
-        { from: "_headers", to: "." },
+        { from: 'public', to: 'public' },
+        { from: '_headers', to: '.' },
       ],
     }),
     new HtmlWebpackPlugin({
-      template: "./index.html",
+      template: './index.html',
     }),
   ],
   performance: {
@@ -101,7 +100,7 @@ const appConfig = {
     asyncWebAssembly: true,
     topLevelAwait: true,
   },
-  devtool: "source-map",
-};
+  devtool: 'source-map',
+}
 
-export default [appConfig];
+export default [appConfig]

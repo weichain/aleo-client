@@ -1,12 +1,12 @@
 import {
   Account,
-  ProgramManager,
-  PrivateKey,
-  initThreadPool,
   AleoKeyProvider,
+  AleoKeyProviderParams,
   AleoNetworkClient,
   NetworkRecordProvider,
-  AleoKeyProviderParams,
+  PrivateKey,
+  ProgramManager,
+  initThreadPool,
 } from '@aleohq/sdk'
 import { expose, proxy } from 'comlink'
 
