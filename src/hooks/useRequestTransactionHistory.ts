@@ -1,34 +1,35 @@
 import { useWallet } from '@demox-labs/aleo-wallet-adapter-react'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+
+import { useAppContext } from '../state/context'
+import { useInterval } from './useInterval'
 
 export const useRequestTransactionHistory = () => {
   const { publicKey, requestTransactionHistory } = useWallet()
-  const [txHistory, setTxHistory] = useState<any>()
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const { setTransactionHistory } = useAppContext()
 
-  // if (!publicKey) throw new WalletNotConnectedError();
-  const getTxHistory = async () => {
+  const fetchTransactionHistory = useCallback(() => {
     if (!publicKey) return
-    requestTransactionHistory!('credits.aleo')
-      .then((data: any) => {
-        // const recordsFormatted = recs.filter((rec: any) => rec.spent === false)
-        // .map((rec) => JSON.stringify(rec, null, 2));
-        setTxHistory(data)
-        setLoading(false)
-      })
-      .catch((e) => {
-        setError(e)
-        setLoading(false)
-      })
-    await new Promise((f) => setTimeout(f, 15000))
-    getTxHistory()
-  }
-
-  useEffect(() => {
     setLoading(true)
-    getTxHistory()
+    // requestTransactionHistory!('credits.aleo')
+    requestTransactionHistory!('distrofund_private_transfer.aleo')
+      .then((data: any) => {
+        setTransactionHistory((prevState) => {
+          if (!data || prevState.length === data.length) return prevState
+          return data
+        })
+      })
+      .catch((e) => setError(e))
+      .finally(() => setLoading(false))
   }, [publicKey])
 
-  return { txHistory, loading, error }
+  useEffect(() => {
+    fetchTransactionHistory()
+  }, [publicKey])
+
+  useInterval(fetchTransactionHistory, 60000)
+
+  return { loading, error }
 }

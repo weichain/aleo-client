@@ -1,0 +1,16 @@
+.dropdown-holder {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+
+  .empty {
+    display: flex;
+    width: 85%;
+  }
+
+  .dropdown {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+  }
+}

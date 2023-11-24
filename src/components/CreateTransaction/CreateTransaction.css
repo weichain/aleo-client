@@ -4,34 +4,8 @@
   align-items: center;
 }
 
-.input-group {
-  width: 100%;
-  margin: 1em;
+.checkboxes {
   display: flex;
-  flex-direction: column;
-}
-
-.dropdown-holder {
-  display: flex;
-  flex-direction: row;
   width: 100%;
-
-  .empty {
-    display: flex;
-    width: 85%;
-  }
-
-  .dropdown {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5em;
-  }
-}
-
-label {
-  text-align: left;
-}
-
-textarea {
-  height: 5em;
+  justify-content: space-around;
 }

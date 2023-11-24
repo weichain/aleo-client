@@ -33,7 +33,8 @@ export const privateTransfer = (
     'distrofund_private_transfer.aleo',
     transition,
     inputs,
-    100000
+    100000,
+    // feePrivate
   )
   return aleoTransaction
 }

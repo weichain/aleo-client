@@ -1,0 +1,14 @@
+.input-group {
+  width: 100%;
+  margin: 1em;
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  text-align: left;
+}
+
+textarea {
+  height: 5em;
+}

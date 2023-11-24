@@ -11,47 +11,42 @@ import { TransferHandlerWalletExtension } from '../TransferHandlerWalletExtensio
 import './PopupReview.css'
 
 type PopupReviewProps = {
-  recipients: string[]
-  amounts: number[]
   setTransactionId: (txId: string) => void
   setSubmitError: (error: any) => void
-  record: any
-  privateKey: string | undefined
-  // aleoWorker: Worker | undefined;
 }
 
 const PopupReview = ({
-  recipients: accounts,
-  amounts,
   setTransactionId,
   setSubmitError,
-  record,
-  privateKey, // aleoWorker,
 }: PopupReviewProps) => {
-  const { publicKey, wallet } = useWallet()
+  const { publicKey } = useWallet()
   const [open, setOpen] = useState<boolean>()
   const [data, setData] = useState<any[]>([])
   const [totalAmount, setTotalAmount] = useState<string>()
   const closeModal = () => setOpen(false)
-  const { mapping, balanceAllRecords, records } = useAppContext()!
+  const { accountInfo, transactionInfo } = useAppContext()
+  const { mapping, balanceRecords } = accountInfo
+  const {
+    transactionInputs: { amounts, recipients, record, privateKey },
+  } = transactionInfo
 
   const calcBalance = () => {
-    return (Number(mapping) + Number(balanceAllRecords)).toFixed(6)
+    return (Number(mapping) + Number(balanceRecords)).toFixed(6)
   }
 
   useEffect(() => {
-    setOpen(accounts?.length > 0)
+    setOpen(recipients.length > 0)
     let data = []
     let total = 0
-    for (let i = 0; i < accounts.length; i++) {
-      const account = accounts[i]
+    for (let i = 0; i < recipients.length; i++) {
+      const account = recipients[i]
       const amount = amounts[i] / 10 ** 6
       total += amount
       data.push({ account, amount })
     }
     setData(data)
     setTotalAmount(total.toFixed(6))
-  }, [accounts, amounts])
+  }, [recipients, amounts])
 
   const columns = useMemo(
     () => [
@@ -149,8 +144,6 @@ const PopupReview = ({
         )}
       </div>
       <TransferHandlerWalletExtension
-        recipients={accounts}
-        amounts={amounts}
         setSubmitError={setSubmitError}
         setTransactionId={setTransactionId}
       />
