@@ -230,7 +230,10 @@ const Transactions = () => {
           </td>
           <td>
             {receivers.map((r, i) => (
-              <TooltipWithCopyButton id={'senderValue' + i} value={r.address}>
+              <TooltipWithCopyButton
+                id={'receiverAddress' + i}
+                value={r.address}
+              >
                 <>
                   <TruncateText text={r.address} limit={12} />
                   <br />
@@ -239,13 +242,15 @@ const Transactions = () => {
             ))}
           </td>
           <td>
-            {receivers.map((r) => (
-              <>
-                <span>
-                  {r.value ? parseInt(r.value) / 10 ** 6 : 'decrypt fail'}
-                </span>
-                <br />
-              </>
+            {receivers.map((r, i) => (
+              <TooltipWithCopyButton id={'receiverValue' + i} value={r.value}>
+                <>
+                  <span>
+                    {r.value ? parseInt(r.value) / 10 ** 6 : 'decrypt fail'}
+                  </span>
+                  <br />
+                </>
+              </TooltipWithCopyButton>
             ))}
           </td>
         </tr>
