@@ -1,44 +1,58 @@
 import {
-  useState,
-  createContext,
-  SetStateAction,
   Dispatch,
+  SetStateAction,
+  createContext,
+  memo,
   useContext,
+  useState,
 } from 'react'
-import { Record } from '../types/record'
+
+import { AccountInfo } from '../types/accountInfo'
+import { TransactionHistory } from '../types/transactionHistory'
+import { TransactionInfo, TransferTypes } from '../types/transactionInfo'
+import {
+  createEmptyAccountInfo,
+  createEmptyTransactionInfo,
+} from '../utils/stateFactory'
 
 interface AppContextType {
-  records: Record[]
-  balanceAllRecords: string
-  mapping: string
-  setRecords: Dispatch<SetStateAction<Record[]>>
-  setMapping: Dispatch<SetStateAction<string>>
-  setBalanceAllRecords: Dispatch<SetStateAction<string>>
+  accountInfo: AccountInfo
+  transactionInfo: TransactionInfo
+  transactionHistory: TransactionHistory[]
+  setAccountInfo: Dispatch<SetStateAction<AccountInfo>>
+  setTransactionInfo: Dispatch<SetStateAction<TransactionInfo>>
+  setTransactionHistory: Dispatch<SetStateAction<TransactionHistory[]>>
 }
 
-export const AppContext = createContext<AppContextType | undefined>(undefined)
+export const AppContext = createContext<AppContextType>({} as AppContextType)
 
-export const AppContextProvider = ({ children }: any) => {
-  const [records, setRecords] = useState<Record[]>([])
-  const [mapping, setMapping] = useState<string>('0')
-  const [balanceAllRecords, setBalanceAllRecords] = useState<string>('0')
+export const AppContextProvider = memo(({ children }: any) => {
+  const [accountInfo, setAccountInfo] = useState<AccountInfo>(
+    createEmptyAccountInfo()
+  )
+  const [transactionInfo, setTransactionInfo] = useState<TransactionInfo>(
+    createEmptyTransactionInfo()
+  )
+  const [transactionHistory, setTransactionHistory] = useState<
+    TransactionHistory[]
+  >([])
   return (
     <AppContext.Provider
       value={{
-        records,
-        mapping,
-        balanceAllRecords,
-        setRecords,
-        setMapping,
-        setBalanceAllRecords,
+        accountInfo,
+        transactionInfo,
+        transactionHistory,
+        setAccountInfo,
+        setTransactionInfo,
+        setTransactionHistory,
       }}
     >
       {children}
     </AppContext.Provider>
   )
-}
+})
 
-export const useAppContext = (): AppContextType | undefined => {
+export const useAppContext = (): AppContextType => {
   const appContext = useContext(AppContext)
   return appContext
 }

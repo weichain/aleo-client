@@ -1,57 +1,43 @@
-import React, { useEffect, useState } from 'react'
-import { useRequestRecords } from '../../hooks/useRequestRecords'
-import './Wallet.css'
-import { useRequestMapping } from '../../hooks/useRequestMapping'
-import { useRequestTransactionHistory } from '../../hooks/useRequestTransactionHistory'
 import { useWallet } from '@demox-labs/aleo-wallet-adapter-react'
+import { useEffect } from 'react'
+
 import { useAppContext } from '../../state/context'
+import { createEmptyAccountInfo } from '../../utils/stateFactory'
+import './Wallet.css'
 
 const Wallet = () => {
   const { publicKey } = useWallet()
-  const { records } = useRequestRecords()
-  const { mapping } = useRequestMapping()
-  const {
-    balanceAllRecords,
-    mapping: mappingBalance,
-    setBalanceAllRecords,
-    setMapping,
-  } = useAppContext()!
+  const { accountInfo, setAccountInfo } = useAppContext()
+  const { mapping, records, balanceRecords } = accountInfo
+  const formattedMapping = parseFloat(mapping.replace('u64', '')) / 10 ** 6
 
   useEffect(() => {
-    let temp
-    if (mapping) {
-      temp = (Number(mapping.replace('u64', '')) / 10 ** 6).toString()
-      setMapping(temp)
+    if (!publicKey) {
+      setAccountInfo(createEmptyAccountInfo())
     }
-    if (records?.length > 0) {
-      let balance0 = 0
-      records?.forEach((r: any) => {
-        if (r.spent) return
-        balance0 += Number(r.data.microcredits.replace('u64.private', ''))
-      })
-      temp = String(balance0 / 10 ** 6)
-      setBalanceAllRecords(temp)
-    }
-  }, [mapping, records])
-
-  useEffect(() => {
-    if (publicKey) return
-    setMapping('0')
-    setBalanceAllRecords('0')
-  }, [publicKey])
+    let balance0 = 0
+    records.forEach((r: any) => {
+      if (r.spent) return
+      balance0 += parseInt(r.data.microcredits.replace('u64.private', ''))
+    })
+    setAccountInfo((prevState) => {
+      if (parseInt(balanceRecords) === balance0) return prevState
+      return {
+        ...prevState,
+        balanceRecords: String(balance0 / 10 ** 6),
+      }
+    })
+  }, [publicKey, JSON.stringify(records)])
 
   return (
     <div className="wallet">
       <div className={`balances ${!publicKey && 'disable'}`}>
         <label>Balance</label>
-        <span>Private: {balanceAllRecords} ALEO</span>
-        <span>Public: {mappingBalance} ALEO</span>
+        <span>Private: {balanceRecords} ALEO</span>
+        <span>Public: {formattedMapping} ALEO</span>
         <span>
           Total:{' '}
-          {(
-            parseFloat(balanceAllRecords) + parseFloat(mappingBalance)
-          ).toPrecision(6)}{' '}
-          ALEO
+          {(parseFloat(balanceRecords) + formattedMapping).toPrecision(6)} ALEO
         </span>
       </div>
       {!publicKey && <div>Connect wallet to show balance</div>}

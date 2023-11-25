@@ -4,17 +4,8 @@
   align-items: center;
 }
 
-.input-group {
-  width: 100%;
-  margin: 1em;
+.checkboxes {
   display: flex;
-  flex-direction: column;
-}
-
-label {
-  text-align: left;
-}
-
-textarea {
-  height: 5em;
+  width: 100%;
+  justify-content: space-around;
 }

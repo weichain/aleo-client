@@ -1,61 +1,52 @@
-import { useState, useEffect, useMemo, MouseEvent } from 'react'
+import { useWallet } from '@demox-labs/aleo-wallet-adapter-react'
+import { MouseEvent, useEffect, useMemo, useState } from 'react'
+import { Row } from 'react-table'
 import Popup from 'reactjs-popup'
 import 'reactjs-popup/dist/index.css'
-import Table from '../Table/Table'
-import { Row } from 'react-table'
-import './PopupReview.css'
-import Button from '../Button/Button'
+
 import { useAppContext } from '../../state/context'
-import { useWallet } from '@demox-labs/aleo-wallet-adapter-react'
-import { handleSubmitWalletExtension } from '../CreateTransaction/handlers/extensionHandler'
 import { handleMultiMethodSubmit } from '../CreateTransaction/handlers/sdkHandler'
+import Table from '../Table/Table'
+import { TransferHandlerWalletExtension } from '../TransferHandlerWalletExtension/TransferHandlerWalletExtension'
+import './PopupReview.css'
 
 type PopupReviewProps = {
-  accounts: string[]
-  amounts: string[]
   setTransactionId: (txId: string) => void
-  recordToSend: any
-  checkValidInputs: () => [string[], string[], Error | undefined]
   setSubmitError: (error: any) => void
-  record: any
-  privateKey: string | undefined
-  // aleoWorker: Worker | undefined;
 }
 
 const PopupReview = ({
-  accounts,
-  amounts,
   setTransactionId,
-  recordToSend,
-  checkValidInputs,
   setSubmitError,
-  record,
-  privateKey, // aleoWorker,
 }: PopupReviewProps) => {
-  const { publicKey, wallet } = useWallet()
+  const { publicKey } = useWallet()
   const [open, setOpen] = useState<boolean>()
   const [data, setData] = useState<any[]>([])
   const [totalAmount, setTotalAmount] = useState<string>()
   const closeModal = () => setOpen(false)
-  const { mapping, balanceAllRecords, records } = useAppContext()!
+  const { accountInfo, transactionInfo } = useAppContext()
+  const { mapping, balanceRecords } = accountInfo
+  const {
+    transactionInputs: { amounts, recipients, record, privateKey },
+  } = transactionInfo
 
   const calcBalance = () => {
-    return (Number(mapping) + Number(balanceAllRecords)).toFixed(6)
+    return (Number(mapping) + Number(balanceRecords)).toFixed(6)
   }
 
   useEffect(() => {
-    setOpen(accounts?.length > 0)
+    setOpen(recipients.length > 0)
     let data = []
     let total = 0
-    for (let i = 0; i < accounts.length; i++) {
-      const account = accounts[i]
-      const amount = parseInt(amounts[i]) / 10 ** 6
+    for (let i = 0; i < recipients.length; i++) {
+      const account = recipients[i]
+      const amount = amounts[i] / 10 ** 6
       total += amount
       data.push({ account, amount })
     }
     setData(data)
     setTotalAmount(total.toFixed(6))
-  }, [accounts, amounts])
+  }, [recipients, amounts])
 
   const columns = useMemo(
     () => [
@@ -85,34 +76,35 @@ const PopupReview = ({
     )
   }
 
-  const handleSubmit = (
-    event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
-  ) => {
-    event.preventDefault()
-    try {
-      publicKey
-        ? handleSubmitWalletExtension({
-            publicKey,
-            setTransactionId,
-            wallet,
-            recordToSend,
-            amounts,
-            recipients: accounts,
-            setSubmitError,
-          })
-        : handleMultiMethodSubmit({
-            checkValidInputs,
-            record,
-            setSubmitError,
-            privateKey,
-            setTransactionId,
-            // aleoWorker
-          })
-      closeModal()
-    } catch (e) {
-      console.log('e', e)
-    }
-  }
+  // const handleSubmit = (
+  //   event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
+  // ) => {
+  //   event.preventDefault()
+  //   try {
+  //     publicKey
+  //       ? handleSubmitWalletExtension({
+  //           publicKey,
+  //           setTransactionId,
+  //           wallet,
+  //           recordToSend,
+  //           amounts,
+  //           recipients: accounts,
+  //           setSubmitError,
+  //         })
+  //       : handleMultiMethodSubmit({
+  //           record,
+  //           setSubmitError,
+  //           privateKey,
+  //           setTransactionId,
+  //           recipients: accounts,
+  //           amounts,
+  //           // aleoWorker
+  //         })
+  //     closeModal()
+  //   } catch (e) {
+  //     console.log('e', e)
+  //   }
+  // }
 
   return (
     <Popup className="custom-popup" open={open} onClose={closeModal}>
@@ -151,11 +143,10 @@ const PopupReview = ({
           </>
         )}
       </div>
-      <Button
-        className="submit-btn"
-        onClick={handleSubmit}
-        text="Submit"
-      ></Button>
+      <TransferHandlerWalletExtension
+        setSubmitError={setSubmitError}
+        setTransactionId={setTransactionId}
+      />
     </Popup>
   )
 }

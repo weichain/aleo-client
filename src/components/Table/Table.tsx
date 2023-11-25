@@ -1,14 +1,17 @@
-import { useTable, usePagination } from 'react-table'
+import { useCallback, useEffect, useMemo } from 'react'
+import { Row, useExpanded, usePagination, useTable } from 'react-table'
+
 import './Table.css'
 
 interface InputParamsInterface {
   data: any[]
-  createRow: (row: any) => JSX.Element
+  createRow: (row: Row) => JSX.Element
   createdColumns: {
     Header: string
     accessor: string
   }[]
   pageSize: number
+  getPageIndex?: (pageIndex: number) => void
 }
 
 const Table = ({
@@ -16,11 +19,19 @@ const Table = ({
   createRow,
   createdColumns,
   pageSize,
+  getPageIndex,
 }: InputParamsInterface) => {
-  const columns = createdColumns
+  const columns = useMemo(
+    () => createdColumns,
+    [JSON.stringify(createdColumns)]
+  )
+  const tableData = useMemo(() => data, [JSON.stringify(data)])
+
+  const memoizedCreateRow = useCallback(createRow, [createRow])
 
   const tableInstance = useTable(
-    { columns, data, initialState: { pageIndex: 0, pageSize } },
+    { columns, data: tableData, initialState: { pageIndex: 0, pageSize } },
+    useExpanded,
     usePagination
   )
 
@@ -37,7 +48,12 @@ const Table = ({
     gotoPage,
     nextPage,
     previousPage,
+    state: { pageIndex },
   } = tableInstance
+
+  useEffect(() => {
+    getPageIndex && getPageIndex(pageIndex)
+  }, [getPageIndex, pageIndex])
 
   return (
     <>
@@ -57,7 +73,7 @@ const Table = ({
         <tbody {...getTableBodyProps()}>
           {page.map((row) => {
             prepareRow(row)
-            return createRow(row)
+            return memoizedCreateRow(row) // Use the memoized function here
           })}
         </tbody>
       </table>
@@ -81,7 +97,7 @@ const Table = ({
           <span style={{ marginLeft: '1em' }}>
             Page{' '}
             <strong>
-              {tableInstance.state.pageIndex + 1} of {pageOptions.length}
+              {pageIndex + 1} of {pageOptions.length}
             </strong>{' '}
           </span>
         </div>

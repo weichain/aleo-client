@@ -1,34 +1,33 @@
-import { useEffect, useMemo, useState } from "react";
-import { useWallet } from "@demox-labs/aleo-wallet-adapter-react";
-import { useRequestTransactionHistory } from "../../hooks/useRequestTransactionHistory";
-import "./TransactionHistory.css";
-import Table from "../Table/Table";
-import { Row } from "react-table";
-import { ExternalLink } from "react-external-link";
-import TruncateText from "../TruncateText/TruncateText";
+import { useWallet } from '@demox-labs/aleo-wallet-adapter-react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { ExternalLink } from 'react-external-link'
+import { Row } from 'react-table'
+
+import { useAppContext } from '../../state/context'
+import Table from '../Table/Table'
+import TruncateText from '../TruncateText/TruncateText'
+import './TransactionHistory.css'
 
 const TransactionHistory = () => {
-  const { publicKey } = useWallet();
-  const [txs, setTxs] = useState([]);
-  const { txHistory, loading, error } = useRequestTransactionHistory();
+  const { publicKey } = useWallet()
+  const { transactionHistory } = useAppContext()
 
-  useEffect(() => {
-    if (txHistory?.length > 0) {
-      setTxs(txHistory.reverse());
-    }
-  }, [txHistory]);
+  const memoized = useMemo(
+    () => (publicKey ? [...transactionHistory].reverse() : []),
+    [publicKey, JSON.stringify(transactionHistory)]
+  )
 
   const columns = useMemo(
     () => [
       {
-        Header: "Transaction ID",
-        accessor: "transactionId",
+        Header: 'Transaction ID',
+        accessor: 'transactionId',
       },
     ],
     []
-  );
+  )
 
-  const createRow = (row: Row) => {
+  const createRow = useCallback((row: Row) => {
     return (
       <tr {...row.getRowProps()}>
         {row.cells.map((cell) => {
@@ -41,26 +40,26 @@ const TransactionHistory = () => {
                 <TruncateText text={cell.value} limit={36} />
               </ExternalLink>
             </td>
-          );
+          )
         })}
       </tr>
-    );
-  };
+    )
+  }, [])
 
   return (
     <div className="tx-history">
-      <label className={`${!publicKey && "disable"}`}>
+      <label className={`${!publicKey && 'disable'}`}>
         Transaction History
       </label>
       <Table
-        data={publicKey ? txs : []}
+        data={memoized}
         createRow={createRow}
         createdColumns={columns}
         pageSize={4}
       />
       {!publicKey && <div>Connect wallet to show transactions</div>}
     </div>
-  );
-};
+  )
+}
 
-export default TransactionHistory;
+export default TransactionHistory

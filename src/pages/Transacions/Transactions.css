@@ -1,0 +1,13 @@
+.tx-table {
+  display: flex;
+  flex-direction: column;
+  width: 98%;
+}
+
+.td-flex-column {
+  display: flex;
+  flex-direction: column;
+}
+th {
+  text-align: start;
+}
